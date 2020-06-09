@@ -13,7 +13,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://cricket64.com")
+@CrossOrigin(origins = "http://www.cricket46.com")
 public class UserController {
 
     @Autowired

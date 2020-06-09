@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://cricket64.com")
+@CrossOrigin(origins = "http://www.cricket46.com")
 public class TeamController {
 
     @Autowired

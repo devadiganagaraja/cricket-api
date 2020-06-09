@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
-@CrossOrigin(origins = "http://cricket64.com")
+@CrossOrigin(origins = "http://www.cricket46.com")
 public class HelloController {
 
 
