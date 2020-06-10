@@ -1,11 +1,11 @@
 package com.sport.cricket.cricketapi.domain.response;
 
 public class User {
-    private String phone;
     private String userName;
     private String firstName;
     private String lastName;
     private String email;
+    private String password;
 
     public User() {
     }
@@ -14,13 +14,6 @@ public class User {
         this.userName = userName;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
 
     public String getUserName() {
         return userName;
@@ -54,10 +47,18 @@ public class User {
         this.email = email;
     }
 
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "phone=" + phone +
                 ", UserName='" + userName + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +

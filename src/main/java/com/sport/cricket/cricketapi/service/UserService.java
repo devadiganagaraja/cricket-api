@@ -38,7 +38,7 @@ public class UserService {
         userDb.setFirstName(user.getFirstName());
         userDb.setLastName(user.getLastName());
         userDb.setEmail(user.getEmail());
-        userDb.setPhone(user.getPhone());
+        userDb.setPassword(user.getPassword());
         return userDb;
     }
 
@@ -48,7 +48,7 @@ public class UserService {
         userDomain.setFirstName(user.getFirstName());
         userDomain.setLastName(user.getLastName());
         userDomain.setEmail(user.getEmail());
-        userDomain.setPhone(user.getPhone());
+        userDomain.setPassword(user.getPassword());
         return userDomain;
     }
 
@@ -62,6 +62,12 @@ public class UserService {
             return populateDomainUser(userDbOpt.get());
         }
         return new User(username);
+    }
+
+    public boolean authenticateUser(final String username, final String password){
+
+        Optional<com.sport.cricket.cricketapi.persistance.User> userDbOpt = userRepository.findOne(qUser.userName.eq(username).and(qUser.password.endsWith(password)));
+        return  userDbOpt.isPresent();
     }
 
     public boolean deleteUser(final String username) {

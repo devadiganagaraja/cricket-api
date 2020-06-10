@@ -5,20 +5,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "users")
 public class User {
-    private String phone;
     @Id
     private String userName;
     private String firstName;
     private String lastName;
     private String email;
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+    private String password;
 
     public String getUserName() {
         return userName;
@@ -38,6 +30,14 @@ public class User {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setLastName(String lastName) {

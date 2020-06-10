@@ -13,7 +13,8 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://www.cricket46.com")
+@CrossOrigin
+        //(origins = "http://www.cricket46.com")
 public class UserController {
 
     @Autowired
@@ -22,6 +23,11 @@ public class UserController {
     @GetMapping("/users")
     public List<User> users() {
         return userService.getUsers();
+    }
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<Boolean> authenticateUser(@RequestBody User user) {
+        return new ResponseEntity<Boolean>(userService.authenticateUser(user.getUserName(), user.getPassword()), HttpStatus.OK);
     }
 
     @GetMapping("/users/{userName}")
