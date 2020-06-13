@@ -27,7 +27,11 @@ public class UserController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<Boolean> authenticateUser(@RequestBody User user) {
-        return new ResponseEntity<Boolean>(userService.authenticateUser(user.getUserName(), user.getPassword()), HttpStatus.OK);
+        System.out.println("user--"+user);
+
+        boolean userLoggedIn = userService.authenticateUser(user.getUserName(), user.getPassword());
+        System.out.println("userLoggedIn--"+userLoggedIn);
+        return new ResponseEntity<Boolean>(userLoggedIn, HttpStatus.OK);
     }
 
     @GetMapping("/users/{userName}")

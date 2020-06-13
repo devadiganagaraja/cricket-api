@@ -59,10 +59,11 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                ", UserName='" + userName + '\'' +
+                "userName='" + userName + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
                 '}';
     }
 }

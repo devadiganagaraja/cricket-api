@@ -66,7 +66,7 @@ public class UserService {
 
     public boolean authenticateUser(final String username, final String password){
 
-        Optional<com.sport.cricket.cricketapi.persistance.User> userDbOpt = userRepository.findOne(qUser.userName.eq(username).and(qUser.password.endsWith(password)));
+        Optional<com.sport.cricket.cricketapi.persistance.User> userDbOpt = userRepository.findOne(qUser.userName.eq(username).and(qUser.password.eq(password)));
         return  userDbOpt.isPresent();
     }
 
