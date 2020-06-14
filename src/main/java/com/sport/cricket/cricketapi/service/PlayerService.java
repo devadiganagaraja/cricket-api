@@ -49,7 +49,9 @@ public class PlayerService {
         player.setBowlingStyle(playerAggregate.getBowlingStyle());
         player.setCountry(playerAggregate.getCountry());
         player.setBowlingStyle(playerAggregate.getBowlingStyle());
+        player.setPlayerType(playerAggregate.getPlayerType());
         player.setStatsLastUpdated(playerAggregate.getStatsLastUpdated());
+        player.setPlayerStats(playerAggregate.getPlayerStats());
         return player;
     }
 
@@ -69,7 +71,9 @@ public class PlayerService {
                 LocalDate today = new Date().toInstant()
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate();
+
                 if(lastUpdateDate.isEqual(today)){
+                    System.out.println("getting playerStats from cache");
                     return player;
                 }
 
@@ -98,6 +102,7 @@ public class PlayerService {
 
             playerAggregate.setCountry(teamNameService.getTeamName(athlete.getCountry()));
             playerAggregate.setPlayerStats(getPlayerStats(playerId));
+            playerAggregate.setStatsLastUpdated(new Date());
             playerRepository.save(playerAggregate);
             return populatePlayer(playerAggregate);
         }
