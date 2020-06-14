@@ -1,10 +1,10 @@
-package com.sport.cricket.cricketapi.persistance;
+package com.sport.cricket.cricketapi.domain.persistance;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "leagues")
-public class League {
+public class LeagueAggregate {
     @Id
     private Integer leagueId;
     private String abbreviation;

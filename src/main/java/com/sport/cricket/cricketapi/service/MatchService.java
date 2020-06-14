@@ -1,5 +1,6 @@
 package com.sport.cricket.cricketapi.service;
 
+import com.sport.cricket.cricketapi.domain.persistance.MatchAggregate;
 import com.sport.cricket.cricketapi.domain.response.Match;
 import com.sport.cricket.cricketapi.domain.response.Team;
 import com.sport.cricket.cricketapi.domain.source.Event;
@@ -8,30 +9,30 @@ import org.springframework.stereotype.Service;
 @Service
 public class MatchService {
 
-    public   com.sport.cricket.cricketapi.persistance.Match populateDBMatch(Match match) {
-        com.sport.cricket.cricketapi.persistance.Match matchDb = new com.sport.cricket.cricketapi.persistance.Match();
-        matchDb.setName(match.getName());
-        matchDb.setId(match.getId());
-        matchDb.setDate(match.getDate());
-        matchDb.setEndDate(match.getEndDate());
-        return matchDb;
+    public   MatchAggregate populateMatchAggregate(Match match) {
+        MatchAggregate matchAggregate = new MatchAggregate();
+        matchAggregate.setName(match.getName());
+        matchAggregate.setId(match.getId());
+        matchAggregate.setDate(match.getDate());
+        matchAggregate.setEndDate(match.getEndDate());
+        return matchAggregate;
     }
 
-    public Match populateDomainMatch(com.sport.cricket.cricketapi.persistance.Match match) {
+    public Match populateDomainMatch(MatchAggregate matchAggregate) {
         Match matchDomain = new Match();
-        matchDomain.setName(match.getName());
-        matchDomain.setId(match.getId());
-        matchDomain.setDate(match.getDate());
-        matchDomain.setEndDate(match.getEndDate());
+        matchDomain.setName(matchAggregate.getName());
+        matchDomain.setId(matchAggregate.getId());
+        matchDomain.setDate(matchAggregate.getDate());
+        matchDomain.setEndDate(matchAggregate.getEndDate());
         return matchDomain;
     }
 
-    public com.sport.cricket.cricketapi.persistance.Match populateDBMatch(Event event) {
-        com.sport.cricket.cricketapi.persistance.Match matchDb = new com.sport.cricket.cricketapi.persistance.Match();
-        matchDb.setName(event.getName());
-        matchDb.setId(event.getId());
-        matchDb.setDate(event.getDate());
-        matchDb.setEndDate(event.getEndDate());
-        return matchDb;
+    public MatchAggregate populateMatchAggregate(Event event) {
+        MatchAggregate matchAggregate = new MatchAggregate();
+        matchAggregate.setName(event.getName());
+        matchAggregate.setId(event.getId());
+        matchAggregate.setDate(event.getDate());
+        matchAggregate.setEndDate(event.getEndDate());
+        return matchAggregate;
     }
 }

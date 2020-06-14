@@ -1,12 +1,13 @@
-package com.sport.cricket.cricketapi.persistance;
+package com.sport.cricket.cricketapi.domain.persistance;
 
+import com.sport.cricket.cricketapi.domain.common.Competitor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
 @Document(collection = "matches")
-public class Match {
+public class MatchAggregate {
     @Id
     private Long id;
     private String name;

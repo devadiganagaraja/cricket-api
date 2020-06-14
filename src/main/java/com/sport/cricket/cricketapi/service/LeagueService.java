@@ -1,9 +1,8 @@
 package com.sport.cricket.cricketapi.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sport.cricket.cricketapi.config.LeagueYamlConfig;
+import com.sport.cricket.cricketapi.domain.persistance.LeagueAggregate;
 import com.sport.cricket.cricketapi.domain.response.League;
-import com.sport.cricket.cricketapi.domain.response.User;
 import com.sport.cricket.cricketapi.repository.LeagueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,7 +33,7 @@ public class LeagueService {
 
     public League getLeague(Integer league) {
 
-        Optional<com.sport.cricket.cricketapi.persistance.League> leagueDbOpt = leagueRepository.findById(league);
+        Optional<LeagueAggregate> leagueDbOpt = leagueRepository.findById(league);
 
         if(leagueDbOpt.isPresent()){
             return populateDomainLeague(leagueDbOpt.get());
@@ -43,23 +42,23 @@ public class LeagueService {
     }
 
 
-    private League populateDomainLeague(com.sport.cricket.cricketapi.persistance.League league) {
+    private League populateDomainLeague(LeagueAggregate leagueAggregate) {
         League leagueDomain = new League();
-        leagueDomain.setId(league.getLeagueId());
-        leagueDomain.setName(league.getName());
-        leagueDomain.setAbbreviation(league.getAbbreviation());
-        leagueDomain.setTournament(league.isTournament());
+        leagueDomain.setId(leagueAggregate.getLeagueId());
+        leagueDomain.setName(leagueAggregate.getName());
+        leagueDomain.setAbbreviation(leagueAggregate.getAbbreviation());
+        leagueDomain.setTournament(leagueAggregate.isTournament());
         return leagueDomain;
     }
 
 
-    private com.sport.cricket.cricketapi.persistance.League populateDBLeague(League league) {
-        com.sport.cricket.cricketapi.persistance.League leagueDB = new com.sport.cricket.cricketapi.persistance.League();
-        leagueDB.setLeagueId(league.getId());
-        leagueDB.setName(league.getName());
-        leagueDB.setAbbreviation(league.getAbbreviation());
-        leagueDB.setTournament(league.isTournament());
-        return leagueDB;
+    private LeagueAggregate populateDBLeague(League league) {
+        LeagueAggregate leagueAggregate = new LeagueAggregate();
+        leagueAggregate.setLeagueId(league.getId());
+        leagueAggregate.setName(league.getName());
+        leagueAggregate.setAbbreviation(league.getAbbreviation());
+        leagueAggregate.setTournament(league.isTournament());
+        return leagueAggregate;
     }
 
 

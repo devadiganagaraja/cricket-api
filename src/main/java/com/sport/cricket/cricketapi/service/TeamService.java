@@ -1,7 +1,8 @@
 package com.sport.cricket.cricketapi.service;
 
+import com.sport.cricket.cricketapi.domain.persistance.QTeamAggregate;
+import com.sport.cricket.cricketapi.domain.persistance.TeamAggregate;
 import com.sport.cricket.cricketapi.domain.response.Team;
-import com.sport.cricket.cricketapi.persistance.QTeam;
 import com.sport.cricket.cricketapi.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class TeamService {
     TeamRepository teamRepository;
 
     @Autowired
-    QTeam qTeam;
+    QTeamAggregate qTeamAggregate;
 
 
 
@@ -25,8 +26,8 @@ public class TeamService {
     }
 
 
-    public   com.sport.cricket.cricketapi.persistance.Team populateDBTeam(Team team) {
-        com.sport.cricket.cricketapi.persistance.Team teamDb = new com.sport.cricket.cricketapi.persistance.Team();
+    public TeamAggregate populateDBTeam(Team team) {
+        TeamAggregate teamDb = new TeamAggregate();
         teamDb.setName(team.getName());
         teamDb.setAbbreviation(team.getAbbreviation());
         teamDb.setId(Long.valueOf(team.getId()));
@@ -34,12 +35,12 @@ public class TeamService {
         return teamDb;
     }
 
-    public Team populateDomainTeam(com.sport.cricket.cricketapi.persistance.Team team) {
+    public Team populateDomainTeam(TeamAggregate teamAggregate) {
         Team teamDomain = new Team();
-        teamDomain.setName(team.getName());
-        teamDomain.setAbbreviation(team.getAbbreviation());
-        teamDomain.setId(String.valueOf(team.getId()));
-        teamDomain.setNational(team.isNational());
+        teamDomain.setName(teamAggregate.getName());
+        teamDomain.setAbbreviation(teamAggregate.getAbbreviation());
+        teamDomain.setId(String.valueOf(teamAggregate.getId()));
+        teamDomain.setNational(teamAggregate.isNational());
         return teamDomain;
     }
 

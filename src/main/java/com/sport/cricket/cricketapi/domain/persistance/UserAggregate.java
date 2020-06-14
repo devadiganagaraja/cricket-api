@@ -1,10 +1,10 @@
-package com.sport.cricket.cricketapi.persistance;
+package com.sport.cricket.cricketapi.domain.persistance;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "users")
-public class User {
+public class UserAggregate {
     @Id
     private String userName;
     private String firstName;

@@ -1,9 +1,9 @@
 package com.sport.cricket.cricketapi.config;
 
-import com.sport.cricket.cricketapi.persistance.QLeague;
-import com.sport.cricket.cricketapi.persistance.QSeason;
-import com.sport.cricket.cricketapi.persistance.QUser;
-import com.sport.cricket.cricketapi.persistance.QTeam;
+import com.sport.cricket.cricketapi.domain.persistance.QLeagueAggregate;
+import com.sport.cricket.cricketapi.domain.persistance.QSeasonAggregate;
+import com.sport.cricket.cricketapi.domain.persistance.QTeamAggregate;
+import com.sport.cricket.cricketapi.domain.persistance.QUserAggregate;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,23 +12,23 @@ import org.springframework.context.annotation.Configuration;
 public class QueryDSLConfig {
 
     @Bean
-    public QUser qUser(){
-        return new QUser("users");
+    public QUserAggregate qUserAggregate(){
+        return new QUserAggregate("users");
     }
 
     @Bean
-    public QLeague qLeague(){
-        return new QLeague("leagues");
+    public QLeagueAggregate qLeagueAggregate(){
+        return new QLeagueAggregate("leagues");
     }
 
     @Bean
-    public QSeason qSeason(){
-        return new QSeason("seasons");
+    public QSeasonAggregate qSeasonAggregate(){
+        return new QSeasonAggregate("seasons");
     }
 
     @Bean
-    public QTeam qTeam(){
-        return new QTeam("teams");
+    public QTeamAggregate qTeamAggregate(){
+        return new QTeamAggregate("teams");
     }
 
 

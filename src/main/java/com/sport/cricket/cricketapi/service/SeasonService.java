@@ -1,11 +1,14 @@
 package com.sport.cricket.cricketapi.service;
 
 import com.sport.cricket.cricketapi.config.LeagueYamlConfig;
+import com.sport.cricket.cricketapi.domain.persistance.MatchAggregate;
+import com.sport.cricket.cricketapi.domain.persistance.QSeasonAggregate;
+import com.sport.cricket.cricketapi.domain.persistance.SeasonAggregate;
+import com.sport.cricket.cricketapi.domain.persistance.TeamAggregate;
 import com.sport.cricket.cricketapi.domain.response.*;
 import com.sport.cricket.cricketapi.domain.source.Event;
 import com.sport.cricket.cricketapi.domain.source.ItemListing;
 import com.sport.cricket.cricketapi.domain.source.Ref;
-import com.sport.cricket.cricketapi.persistance.QSeason;
 import com.sport.cricket.cricketapi.repository.MatchRepository;
 import com.sport.cricket.cricketapi.repository.SeasonRepository;
 import com.sport.cricket.cricketapi.repository.TeamRepository;
@@ -45,14 +48,13 @@ public class SeasonService {
     RestTemplate restTemplate;
 
     @Autowired
-    QSeason qSeason;
+    QSeasonAggregate qSeasonAggregate;
 
     public List<Season> getSeasons(Integer league) {
         List<Season> seasons = new ArrayList<>();
-         seasonRepository.findAll(qSeason.leagueId.eq(league)).forEach(seasonDb -> {
-
-            seasons.add(populateDomainSeason(seasonDb));
-                });
+         seasonRepository.findAll(qSeasonAggregate.leagueId.eq(league)).forEach(seasonDb -> {
+                seasons.add(populateDomainSeason(seasonDb));
+         });
 
 
         return seasons;
@@ -60,7 +62,7 @@ public class SeasonService {
 
 
     public Season getSeason(Integer league, Integer season) {
-        Optional<com.sport.cricket.cricketapi.persistance.Season> seasonDbOpt =  seasonRepository.findById(league+"_"+season);
+        Optional<SeasonAggregate> seasonDbOpt =  seasonRepository.findById(league+"_"+season);
         if(seasonDbOpt.isPresent())
             return populateDomainSeason(seasonDbOpt.get());
         else
@@ -70,15 +72,15 @@ public class SeasonService {
     public List<Team> getSeasonTeams(Integer league, Integer season){
         List<Team> teams = new ArrayList<>();
         String seasonKey = league+"_"+season;
-        Optional<com.sport.cricket.cricketapi.persistance.Season> seasonDbOpt =  seasonRepository.findById(seasonKey);
-        if(seasonDbOpt.isPresent()) {
-            seasonDbOpt.get().getTeams().forEach(team -> {
+        Optional<SeasonAggregate> seasonAggregateOptional =  seasonRepository.findById(seasonKey);
+        if(seasonAggregateOptional.isPresent()) {
+            seasonAggregateOptional.get().getTeams().forEach(team -> {
 
-                Optional<com.sport.cricket.cricketapi.persistance.Team> teamDbOpt = teamRepository.findById(team);
+                Optional<TeamAggregate> teamAggregateOptional = teamRepository.findById(team);
 
-                if (teamDbOpt.isPresent()) {
+                if (teamAggregateOptional.isPresent()) {
 
-                    teams.add(teamService.populateDomainTeam(teamDbOpt.get()));
+                    teams.add(teamService.populateDomainTeam(teamAggregateOptional.get()));
                 }
             });
 
@@ -93,17 +95,15 @@ public class SeasonService {
         String seasonKey = league+"_"+season;
 
         System.out.println("seasonKey==>"+seasonKey);
-        Optional<com.sport.cricket.cricketapi.persistance.Season> seasonDbOpt =  seasonRepository.findById(seasonKey);
+        Optional<SeasonAggregate> seasonAggregateOpt =  seasonRepository.findById(seasonKey);
 
-        if(seasonDbOpt.isPresent()) {
-            System.out.println("seasonDbOpt==>"+seasonDbOpt.get());
-            seasonDbOpt.get().getMatches().forEach(match -> {
-                Optional<com.sport.cricket.cricketapi.persistance.Match> matchDbOpt = matchRepository.findById(match);
+        if(seasonAggregateOpt.isPresent()) {
+            seasonAggregateOpt.get().getMatches().forEach(match -> {
+                Optional<MatchAggregate> matchAggregateOptional = matchRepository.findById(match);
 
-                if (matchDbOpt.isPresent()) {
-                    System.out.println("matchDbOpt==>"+matchDbOpt.get());
+                if (matchAggregateOptional.isPresent()) {
 
-                    matches.add(matchService.populateDomainMatch(matchDbOpt.get()));
+                    matches.add(matchService.populateDomainMatch(matchAggregateOptional.get()));
 
                 }
             });
@@ -112,8 +112,8 @@ public class SeasonService {
     }
 
 
-    private com.sport.cricket.cricketapi.persistance.Season populateDBSeason(Season season) {
-        com.sport.cricket.cricketapi.persistance.Season seasonDb = new com.sport.cricket.cricketapi.persistance.Season();
+    private SeasonAggregate populateDBSeason(Season season) {
+        SeasonAggregate seasonDb = new SeasonAggregate();
         seasonDb.setEndDate(season.getEndDate());
         seasonDb.setStartDate(season.getStartDate());
         seasonDb.setName(season.getName());
@@ -124,14 +124,14 @@ public class SeasonService {
         return seasonDb;
     }
 
-    private Season populateDomainSeason(com.sport.cricket.cricketapi.persistance.Season season) {
+    private Season populateDomainSeason(SeasonAggregate seasonAggregate) {
         Season seasonDomain = new Season();
-        seasonDomain.setId(season.getLeagueId());
-        seasonDomain.setStartDate(season.getStartDate());
-        seasonDomain.setEndDate(season.getEndDate());
-        seasonDomain.setName(season.getName());
-        seasonDomain.setShortName(season.getShortName());
-        seasonDomain.setYear(season.getYear());
+        seasonDomain.setId(seasonAggregate.getLeagueId());
+        seasonDomain.setStartDate(seasonAggregate.getStartDate());
+        seasonDomain.setEndDate(seasonAggregate.getEndDate());
+        seasonDomain.setName(seasonAggregate.getName());
+        seasonDomain.setShortName(seasonAggregate.getShortName());
+        seasonDomain.setYear(seasonAggregate.getYear());
         return seasonDomain;
     }
 
@@ -203,7 +203,7 @@ public class SeasonService {
                         Event event = restTemplate.getForObject(eventRef.get$ref(), Event.class);
 
                         if (null != event) {
-                            matchRepository.save(matchService.populateDBMatch(event));
+                            matchRepository.save(matchService.populateMatchAggregate(event));
                             season.getMatches().add(event.getId());
                         }
                     });

@@ -1,4 +1,4 @@
-package com.sport.cricket.cricketapi.persistance;
+package com.sport.cricket.cricketapi.domain.common;
 
 public class Competitor {
     private boolean winner;

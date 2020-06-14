@@ -1,13 +1,13 @@
 package com.sport.cricket.cricketapi.service;
 
+import com.sport.cricket.cricketapi.domain.persistance.QUserAggregate;
+import com.sport.cricket.cricketapi.domain.persistance.UserAggregate;
 import com.sport.cricket.cricketapi.domain.response.User;
-import com.sport.cricket.cricketapi.persistance.QUser;
 import com.sport.cricket.cricketapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,7 +20,7 @@ public class UserService {
 
 
     @Autowired
-    QUser qUser;
+    QUserAggregate qUserAggregate;
 
 
     public List<User> getUsers(){
@@ -32,8 +32,8 @@ public class UserService {
         return user;
     }
 
-    private com.sport.cricket.cricketapi.persistance.User populateDBUser(User user) {
-        com.sport.cricket.cricketapi.persistance.User userDb = new com.sport.cricket.cricketapi.persistance.User();
+    private UserAggregate populateDBUser(User user) {
+        UserAggregate userDb = new UserAggregate();
         userDb.setUserName(user.getUserName());
         userDb.setFirstName(user.getFirstName());
         userDb.setLastName(user.getLastName());
@@ -42,7 +42,7 @@ public class UserService {
         return userDb;
     }
 
-    private User populateDomainUser(com.sport.cricket.cricketapi.persistance.User user) {
+    private User populateDomainUser(UserAggregate user) {
         User userDomain = new User();
         userDomain.setUserName(user.getUserName());
         userDomain.setFirstName(user.getFirstName());
@@ -57,7 +57,7 @@ public class UserService {
 
     public User getUser(final String username){
 
-        Optional<com.sport.cricket.cricketapi.persistance.User> userDbOpt = userRepository.findById(username);
+        Optional<UserAggregate> userDbOpt = userRepository.findById(username);
         if(userDbOpt.isPresent()){
             return populateDomainUser(userDbOpt.get());
         }
@@ -66,7 +66,7 @@ public class UserService {
 
     public boolean authenticateUser(final String username, final String password){
 
-        Optional<com.sport.cricket.cricketapi.persistance.User> userDbOpt = userRepository.findOne(qUser.userName.eq(username).and(qUser.password.eq(password)));
+        Optional<UserAggregate> userDbOpt = userRepository.findOne(qUserAggregate.userName.eq(username).and(qUserAggregate.password.eq(password)));
         return  userDbOpt.isPresent();
     }
 

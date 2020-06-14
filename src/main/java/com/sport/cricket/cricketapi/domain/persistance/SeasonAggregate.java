@@ -1,4 +1,4 @@
-package com.sport.cricket.cricketapi.persistance;
+package com.sport.cricket.cricketapi.domain.persistance;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Document(collection = "seasons")
-public class Season {
+public class SeasonAggregate {
     @Id
     private String leagueSeasonId;
     private Integer year;
