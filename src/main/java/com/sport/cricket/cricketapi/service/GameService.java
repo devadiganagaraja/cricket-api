@@ -52,6 +52,7 @@ public class GameService {
     public Game populateDomainMatch(GameAggregate gameAggregate) {
         Game game = new Game();
         game.setId(gameAggregate.getId());
+        game.setName(gameAggregate.getName());
 
         GameInfo gameInfo = gameAggregate.getGameInfo();
 
@@ -72,6 +73,7 @@ public class GameService {
                 manOfTheMatch.setTeamName(teamNameService.getTeamNameByTeamId(award.getTeamId()));
                 game.setManOfTheMatch(manOfTheMatch);
             }
+
 
 
             Map<Integer, ScoreCard> inningsScorecard = new TreeMap<>();
@@ -290,6 +292,7 @@ public class GameService {
         if(!gameAggregateOpt.isPresent()) {
             GameAggregate gameAggregate = new GameAggregate();
             gameAggregate.setId(event.getId()*13);
+            gameAggregate.setName(event.getName());
             populateGameInfo(event, season, gameAggregate);
             populateGameClassVenueAndMatchNote(event, gameAggregate);
             populateCompetitors(event, gameAggregate);

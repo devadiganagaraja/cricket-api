@@ -9,6 +9,7 @@ import java.util.List;
 public class Game {
     private Long id;
     private  long leagueId;
+    private String name;
     private  String leagueName;
     private Integer season;
     private Date date;
@@ -19,6 +20,14 @@ public class Game {
     private String team1Score;
     private String team2Score;
     private String toss;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getToss() {
         return toss;

@@ -14,9 +14,19 @@ public class GameAggregate {
     @Id
     private Long id;
 
+    private String name;
+
     private GameClass gameClass;
 
     private GameInfo gameInfo;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     private Date lastUpdated;
 
