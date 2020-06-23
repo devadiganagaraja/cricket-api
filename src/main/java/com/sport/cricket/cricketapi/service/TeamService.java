@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,13 +27,16 @@ public class TeamService {
     }
 
 
-    public TeamAggregate populateDBTeam(Team team) {
-        TeamAggregate teamDb = new TeamAggregate();
-        teamDb.setName(team.getName());
-        teamDb.setAbbreviation(team.getAbbreviation());
-        teamDb.setId(Long.valueOf(team.getId()));
-        teamDb.setNational(team.getIsNational());
-        return teamDb;
+    public void populateDBTeam(Team team) {
+
+        Optional<TeamAggregate> teamAggregateOptional = teamRepository.findById(Long.valueOf(team.getId()));
+        if(!teamAggregateOptional.isPresent()) {
+            TeamAggregate teamDb = new TeamAggregate();
+            teamDb.setName(team.getName());
+            teamDb.setAbbreviation(team.getAbbreviation());
+            teamDb.setId(Long.valueOf(team.getId()));
+            teamDb.setNational(team.getIsNational());
+        }
     }
 
     public Team populateDomainTeam(TeamAggregate teamAggregate) {

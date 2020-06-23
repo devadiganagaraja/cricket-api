@@ -18,8 +18,8 @@ public class SeasonAggregate {
     private String name;
     private String shortName;
 
-    private Set<Long> teams = new HashSet<>();
-    private Set<Long> matches = new HashSet<>();
+    private Set<Long> teamIds = new HashSet<>();
+    private Set<Long> gameIds = new HashSet<>();
 
 
     public String getLeagueSeasonId() {
@@ -78,25 +78,25 @@ public class SeasonAggregate {
         this.shortName = shortName;
     }
 
-    public Set<Long> getTeams() {
-        return teams;
+    public Set<Long> getTeamIds() {
+        return teamIds;
     }
 
-    public void setTeams(Set<Long> teams) {
-        this.teams = teams;
+    public void setTeamIds(Set<Long> teamIds) {
+        this.teamIds = teamIds;
     }
 
-    public Set<Long> getMatches() {
-        return matches;
+    public Set<Long> getGameIds() {
+        return gameIds;
     }
 
-    public void setMatches(Set<Long> matches) {
-        this.matches = matches;
+    public void setGameIds(Set<Long> gameIds) {
+        this.gameIds = gameIds;
     }
 
     @Override
     public String toString() {
-        return "Season{" +
+        return "SeasonAggregate{" +
                 "leagueSeasonId='" + leagueSeasonId + '\'' +
                 ", year=" + year +
                 ", leagueId=" + leagueId +
@@ -104,8 +104,8 @@ public class SeasonAggregate {
                 ", endDate=" + endDate +
                 ", name='" + name + '\'' +
                 ", shortName='" + shortName + '\'' +
-                ", teams=" + teams +
-                ", matches=" + matches +
+                ", teamIds=" + teamIds +
+                ", gameIds=" + gameIds +
                 '}';
     }
 }

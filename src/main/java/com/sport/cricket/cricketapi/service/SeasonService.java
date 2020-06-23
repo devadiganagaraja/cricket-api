@@ -1,7 +1,7 @@
 package com.sport.cricket.cricketapi.service;
 
 import com.sport.cricket.cricketapi.config.LeagueYamlConfig;
-import com.sport.cricket.cricketapi.domain.persistance.MatchAggregate;
+import com.sport.cricket.cricketapi.domain.persistance.GameAggregate;
 import com.sport.cricket.cricketapi.domain.persistance.QSeasonAggregate;
 import com.sport.cricket.cricketapi.domain.persistance.SeasonAggregate;
 import com.sport.cricket.cricketapi.domain.persistance.TeamAggregate;
@@ -9,10 +9,12 @@ import com.sport.cricket.cricketapi.domain.response.*;
 import com.sport.cricket.cricketapi.domain.source.Event;
 import com.sport.cricket.cricketapi.domain.source.ItemListing;
 import com.sport.cricket.cricketapi.domain.source.Ref;
-import com.sport.cricket.cricketapi.repository.MatchRepository;
+import com.sport.cricket.cricketapi.repository.GameRepository;
 import com.sport.cricket.cricketapi.repository.SeasonRepository;
 import com.sport.cricket.cricketapi.repository.TeamRepository;
+import com.sport.cricket.cricketapi.task.SeasonGameRefreshTask;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -32,7 +34,7 @@ public class SeasonService {
 
 
     @Autowired
-    MatchRepository matchRepository;
+    GameRepository gameRepository;
 
     @Autowired
     LeagueYamlConfig leagueYamlConfig;
@@ -41,7 +43,7 @@ public class SeasonService {
     TeamService teamService;
 
     @Autowired
-    MatchService matchService;
+    GameService gameService;
 
 
     @Autowired
@@ -49,6 +51,10 @@ public class SeasonService {
 
     @Autowired
     QSeasonAggregate qSeasonAggregate;
+
+
+    @Autowired
+    TaskExecutor threadPoolTaskExecutor;
 
     public List<Season> getSeasons(Integer league) {
         List<Season> seasons = new ArrayList<>();
@@ -74,7 +80,7 @@ public class SeasonService {
         String seasonKey = league+"_"+season;
         Optional<SeasonAggregate> seasonAggregateOptional =  seasonRepository.findById(seasonKey);
         if(seasonAggregateOptional.isPresent()) {
-            seasonAggregateOptional.get().getTeams().forEach(team -> {
+            seasonAggregateOptional.get().getTeamIds().forEach(team -> {
 
                 Optional<TeamAggregate> teamAggregateOptional = teamRepository.findById(team);
 
@@ -89,26 +95,26 @@ public class SeasonService {
         return teams;
     }
 
-    public List<Match> getSeasonMatches(Integer league, Integer season) {
+    public List<Game> getSeasonGames(Integer league, Integer season) {
 
-        List<Match> matches = new ArrayList<>();
+        List<Game> games = new ArrayList<>();
         String seasonKey = league+"_"+season;
 
         System.out.println("seasonKey==>"+seasonKey);
         Optional<SeasonAggregate> seasonAggregateOpt =  seasonRepository.findById(seasonKey);
 
         if(seasonAggregateOpt.isPresent()) {
-            seasonAggregateOpt.get().getMatches().forEach(match -> {
-                Optional<MatchAggregate> matchAggregateOptional = matchRepository.findById(match);
+            seasonAggregateOpt.get().getGameIds().forEach(match -> {
+                Optional<GameAggregate> matchAggregateOptional = gameRepository.findById(match);
 
                 if (matchAggregateOptional.isPresent()) {
 
-                    matches.add(matchService.populateDomainMatch(matchAggregateOptional.get()));
+                    games.add(gameService.populateDomainMatch(matchAggregateOptional.get()));
 
                 }
             });
         }
-        return matches;
+        return games;
     }
 
 
@@ -136,7 +142,10 @@ public class SeasonService {
     }
 
 
-    @Scheduled(fixedRate = 500000l)
+    /*
+        season will run with a fixed delay of 1 day with initial 1O sec delay
+      */
+    @Scheduled(fixedDelay = 86400000, initialDelay = 10000)
     private void populateSeasons() {
 
         leagueYamlConfig.getLeagues().forEach(leagueId -> {
@@ -148,11 +157,14 @@ public class SeasonService {
                 List<Ref> seasons = seasonsListing.getItems();
                 if (null != seasons) {
                     seasons.forEach(seasonRef -> {
-                        Season season = restTemplate.getForObject(
+                        Season seasonResponse = restTemplate.getForObject(
                                 seasonRef.get$ref(), Season.class);
 
-                        if (null != season) {
-                            seasonRepository.save(populateDBSeason(season));
+                        if (null != seasonResponse) {
+                            SeasonAggregate season = populateDBSeason(seasonResponse);
+                            populateGames(season);
+                            populateTeams(season);
+                            seasonRepository.save(season);
                         }
 
                     });
@@ -163,56 +175,39 @@ public class SeasonService {
         });
     }
 
+    private void populateTeams(SeasonAggregate season) {
+        ItemListing teamListing = restTemplate.getForObject("http://new.core.espnuk.org/v2/sports/cricket/leagues/" + season.getLeagueId() + "/seasons/"+season.getYear()+"/teams", ItemListing.class);
+        if (null != teamListing.getItems()) {
+            List<Ref> teams = teamListing.getItems();
+            if (null != teams) {
+                teams.forEach(teamRef -> {
+                    Team team = restTemplate.getForObject(
+                            teamRef.get$ref(), Team.class);
 
-    @Scheduled(fixedRate = 500000l)
-    private void populateTeams() {
-        seasonRepository.findAll().forEach(season -> {
-            ItemListing teamListing = restTemplate.getForObject("http://new.core.espnuk.org/v2/sports/cricket/leagues/" + season.getLeagueId() + "/seasons/"+season.getYear()+"/teams", ItemListing.class);
-
-
-            if (null != teamListing.getItems()) {
-                List<Ref> teams = teamListing.getItems();
-                if (null != teams) {
-                    teams.forEach(teamRef -> {
-                        Team team = restTemplate.getForObject(
-                                teamRef.get$ref(), Team.class);
-
-                        if (null != team) {
-                            teamRepository.save(teamService.populateDBTeam(team));
-                            season.getTeams().add(Long.valueOf(team.getId()));
-                        }
-                    });
-                }
+                    if (null != team) {
+                        teamService.populateDBTeam(team);
+                        season.getTeamIds().add(Long.valueOf(team.getId())*13);
+                    }
+                });
             }
-            seasonRepository.save(season);
-        });
-
-
+        }
     }
 
+    private void populateGames(SeasonAggregate season) {
+        ItemListing eventListing = restTemplate.getForObject("http://new.core.espnuk.org/v2/sports/cricket/leagues/" + season.getLeagueId() + "/seasons/"+season.getYear()+"/events", ItemListing.class);
+        if (null != eventListing.getItems()) {
+            List<Ref> events = eventListing.getItems();
+            if (null != events) {
+                events.forEach(eventRef -> {
+                    Event event = restTemplate.getForObject(eventRef.get$ref(), Event.class);
 
-
-    @Scheduled(fixedRate = 500000l)
-    private void populateMatches() {
-        seasonRepository.findAll().forEach(season -> {
-            ItemListing eventListing = restTemplate.getForObject("http://new.core.espnuk.org/v2/sports/cricket/leagues/" + season.getLeagueId() + "/seasons/"+season.getYear()+"/events", ItemListing.class);
-            if (null != eventListing.getItems()) {
-                List<Ref> events = eventListing.getItems();
-                if (null != events) {
-                    events.forEach(eventRef -> {
-                        Event event = restTemplate.getForObject(eventRef.get$ref(), Event.class);
-
-                        if (null != event) {
-                            matchRepository.save(matchService.populateMatchAggregate(event));
-                            season.getMatches().add(event.getId());
-                        }
-                    });
-                }
+                    if (null != event) {
+                        threadPoolTaskExecutor.execute(new SeasonGameRefreshTask(event, season,gameService));
+                        season.getGameIds().add(event.getId()*13);
+                    }
+                });
             }
-            seasonRepository.save(season);
-        });
-
-
+        }
     }
 
 

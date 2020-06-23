@@ -29,6 +29,26 @@ public class PlayerNameService {
     }
 
 
+    public String getPlayerNameByPlayerId(Long playerId){
+        try {
+
+            if(playerNameCache.containsKey(playerId)){
+                return playerNameCache.get(playerId);
+            }else{
+                Athlete athlete = restTemplate.getForObject("http://core.espnuk.org/v2/sports/cricket/athletes/"+(playerId/13), Athlete.class);
+                String displayNameWithId = athlete.getDisplayName()+":"+(playerId);
+                if(null != athlete.getPosition()){
+                    displayNameWithId  = displayNameWithId.concat(":").concat(PlayerService.getBattingStyle(athlete.getPosition().getName()));
+                }
+                playerNameCache.putIfAbsent(playerId, displayNameWithId);
+                return displayNameWithId;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "null:0:null";
+    }
+
     public String getPlayerName(Long sourcePlayerName){
         long playerId = getPlayerId(sourcePlayerName);
         try {

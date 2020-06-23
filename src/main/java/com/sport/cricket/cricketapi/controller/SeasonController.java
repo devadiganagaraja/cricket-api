@@ -36,8 +36,8 @@ public class SeasonController {
         return seasonService.getSeasonTeams(league, season);
     }
 
-    @GetMapping("/leagues/{league}/seasons/{season}/matches")
-    public List<Match> seasonMatches(@PathVariable Integer league, @PathVariable Integer season) {
-        return seasonService.getSeasonMatches(league, season);
+    @GetMapping("/leagues/{league}/seasons/{season}/games")
+    public List<Game> seasonGames(@PathVariable Integer league, @PathVariable Integer season) {
+        return seasonService.getSeasonGames(league, season);
     }
 }
