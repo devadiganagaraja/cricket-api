@@ -56,10 +56,17 @@ public class SeasonService {
     @Autowired
     TaskExecutor threadPoolTaskExecutor;
 
+
+    @Autowired
+    TeamNameService teamNameService;
+
     public List<Season> getSeasons(Integer league) {
         List<Season> seasons = new ArrayList<>();
          seasonRepository.findAll(qSeasonAggregate.leagueId.eq(league)).forEach(seasonDb -> {
-                seasons.add(populateDomainSeason(seasonDb));
+             Season season = populateDomainSeason(seasonDb);
+             if(season.getYear() <2020) {
+                 seasons.add(season);
+             }
          });
 
 
@@ -75,19 +82,13 @@ public class SeasonService {
             return null;
     }
 
-    public List<Team> getSeasonTeams(Integer league, Integer season){
-        List<Team> teams = new ArrayList<>();
+    public List<String> getSeasonTeams(Integer league, Integer season){
+        List<String> teams = new ArrayList<>();
         String seasonKey = league+"_"+season;
         Optional<SeasonAggregate> seasonAggregateOptional =  seasonRepository.findById(seasonKey);
         if(seasonAggregateOptional.isPresent()) {
-            seasonAggregateOptional.get().getTeamIds().forEach(team -> {
-
-                Optional<TeamAggregate> teamAggregateOptional = teamRepository.findById(team);
-
-                if (teamAggregateOptional.isPresent()) {
-
-                    teams.add(teamService.populateDomainTeam(teamAggregateOptional.get()));
-                }
+            seasonAggregateOptional.get().getTeamIds().forEach( teamId -> {
+                teams.add(teamNameService.getTeamNameByTeamId(teamId));
             });
 
 

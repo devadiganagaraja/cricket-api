@@ -32,7 +32,7 @@ public class SeasonController {
     }
 
     @GetMapping("/leagues/{league}/seasons/{season}/teams")
-    public List<Team> seasonTeams(@PathVariable Integer league, @PathVariable Integer season) {
+    public List<String> seasonTeams(@PathVariable Integer league, @PathVariable Integer season) {
         return seasonService.getSeasonTeams(league, season);
     }
 
