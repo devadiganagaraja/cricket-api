@@ -17,9 +17,16 @@ public class Game {
     private String gameNote;
     private String team1Name;
     private String team2Name;
-    private String team1Score;
-    private String team2Score;
+    private List<String> team1Score = new ArrayList<>();
+    private List<String> team2Score = new ArrayList<>();
+    private String gameStatus;
     private String toss;
+    private String venue;
+    private ManOfTheMatch manOfTheMatch;
+    private List<ScoreCard> scoreCards;
+    private List<Leader> leaders = new ArrayList<>();
+    private LiveScore liveScore = new LiveScore();
+
 
     public String getName() {
         return name;
@@ -53,9 +60,6 @@ public class Game {
         this.manOfTheMatch = manOfTheMatch;
     }
 
-    private String venue;
-    private ManOfTheMatch manOfTheMatch;
-
     public List<ScoreCard> getScoreCards() {
         return scoreCards;
     }
@@ -64,8 +68,8 @@ public class Game {
         this.scoreCards = scoreCards;
     }
 
-    private String team1Overs;
-    private String team2Overs;
+    private List<String> team1Overs = new ArrayList<>();
+    private List<String> team2Overs = new ArrayList<>();
 
     public List<Leader> getLeaders() {
         return leaders;
@@ -75,9 +79,7 @@ public class Game {
         this.leaders = leaders;
     }
 
-    private List<ScoreCard> scoreCards;
 
-    private List<Leader> leaders = new ArrayList<>();
 
 
     public Long getId() {
@@ -154,35 +156,52 @@ public class Game {
         this.team2Name = team2Name;
     }
 
-    public String getTeam1Score() {
+
+    public List<String> getTeam1Score() {
         return team1Score;
     }
 
-    public void setTeam1Score(String team1Score) {
+    public void setTeam1Score(List<String> team1Score) {
         this.team1Score = team1Score;
     }
 
-    public String getTeam2Score() {
+    public List<String> getTeam2Score() {
         return team2Score;
     }
 
-    public void setTeam2Score(String team2Score) {
+    public void setTeam2Score(List<String> team2Score) {
         this.team2Score = team2Score;
     }
 
-    public String getTeam1Overs() {
+    public List<String> getTeam1Overs() {
         return team1Overs;
     }
 
-    public void setTeam1Overs(String team1Overs) {
+    public void setTeam1Overs(List<String> team1Overs) {
         this.team1Overs = team1Overs;
     }
 
-    public String getTeam2Overs() {
+    public List<String> getTeam2Overs() {
         return team2Overs;
     }
 
-    public void setTeam2Overs(String team2Overs) {
+    public void setTeam2Overs(List<String> team2Overs) {
         this.team2Overs = team2Overs;
+    }
+
+    public String getGameStatus() {
+        return gameStatus;
+    }
+
+    public void setGameStatus(String gameStatus) {
+        this.gameStatus = gameStatus;
+    }
+
+    public LiveScore getLiveScore() {
+        return liveScore;
+    }
+
+    public void setLiveScore(LiveScore liveScore) {
+        this.liveScore = liveScore;
     }
 }

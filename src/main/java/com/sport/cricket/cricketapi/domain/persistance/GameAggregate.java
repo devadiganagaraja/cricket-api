@@ -1,9 +1,6 @@
 package com.sport.cricket.cricketapi.domain.persistance;
 
-import com.sport.cricket.cricketapi.domain.common.Competitor;
-import com.sport.cricket.cricketapi.domain.common.GameClass;
-import com.sport.cricket.cricketapi.domain.common.GameSummary;
-import com.sport.cricket.cricketapi.domain.common.GameInfo;
+import com.sport.cricket.cricketapi.domain.common.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -35,6 +32,8 @@ public class GameAggregate {
     private Competitor competitor1;
     private Competitor competitor2;
 
+    private LiveScoreCard liveScoreCard;
+
     private String gameStatusApiRef;
 
     public Long getId() {
@@ -65,6 +64,14 @@ public class GameAggregate {
         return gameSummary;
     }
 
+    public LiveScoreCard getLiveScoreCard() {
+        return liveScoreCard;
+    }
+
+    public void setLiveScoreCard(LiveScoreCard liveScoreCard) {
+        this.liveScoreCard = liveScoreCard;
+    }
+
     public void setGameSummary(GameSummary gameSummary) {
         this.gameSummary = gameSummary;
     }
@@ -80,6 +87,22 @@ public class GameAggregate {
 
     public Competitor getCompetitor1() {
         return competitor1;
+    }
+
+    @Override
+    public String toString() {
+        return "GameAggregate{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", gameClass=" + gameClass +
+                ", gameInfo=" + gameInfo +
+                ", lastUpdated=" + lastUpdated +
+                ", gameSummary=" + gameSummary +
+                ", competitor1=" + competitor1 +
+                ", competitor2=" + competitor2 +
+                ", liveScoreCard=" + liveScoreCard +
+                ", gameStatusApiRef='" + gameStatusApiRef + '\'' +
+                '}';
     }
 
     public void setCompetitor1(Competitor competitor1) {
@@ -102,16 +125,4 @@ public class GameAggregate {
         this.gameStatusApiRef = gameStatusApiRef;
     }
 
-    @Override
-    public String toString() {
-        return "GameAggregate{" +
-                "id=" + id +
-                ", gameClass=" + gameClass +
-                ", gameInfo=" + gameInfo +
-                ", lastUpdated=" + lastUpdated +
-                ", gameSummary=" + gameSummary +
-                ", competitor1=" + competitor1 +
-                ", competitor2=" + competitor2 +
-                '}';
-    }
 }

@@ -45,6 +45,10 @@ public class GameService {
     RestTemplate restTemplate;
 
 
+    @Autowired
+    YoutubeApiService youtubeApiService;
+
+
     private static DecimalFormat overFormat = new DecimalFormat("#.#");
     private static DecimalFormat econamyRateFormat = new DecimalFormat("#.##");
 
@@ -64,6 +68,7 @@ public class GameService {
             game.setGameNote(gameInfo.getNote());
             game.setVenue(gameInfo.getVenue());
             game.setToss(gameInfo.getToss());
+            game.setGameStatus(gameInfo.getGameStatus().toString());
 
             GameSummary gameSummary = gameAggregate.getGameSummary();
             if(null != gameSummary){
@@ -79,11 +84,18 @@ public class GameService {
             Map<Integer, ScoreCard> inningsScorecard = new TreeMap<>();
             if(null != gameAggregate.getCompetitor1()){
                 Map<Integer, InningsScoreCard> inningsScoreMap = gameAggregate.getCompetitor1().getInningsScores();
+
+
+
+
                 if(null != inningsScoreMap){
                     inningsScoreMap.forEach((innings, inningsScoreCard) -> {
 
                         if(inningsScorecard.containsKey(innings)){
                             ScoreCard scoreCard = inningsScorecard.get(innings);
+                            LiveScoreCard liveScoreCard = gameAggregate.getLiveScoreCard();
+
+
                             if(null != inningsScoreCard.getBattingCard()){
                                 scoreCard.setInningsInfo(inningsScoreCard.getInningsInfo());
                                 scoreCard.setBattingScoreCard(populateBattingScoreCard(inningsScoreCard.getBattingCard()));
@@ -143,6 +155,9 @@ public class GameService {
             }
 
 
+            game.setLiveScore(populateLiveTab((TreeMap<Integer, ScoreCard>) inningsScorecard, gameAggregate.getLiveScoreCard()));
+
+
             game.setScoreCards((new ArrayList<>(inningsScorecard.values())));
 
 
@@ -187,16 +202,17 @@ public class GameService {
             game.setTeam1Name(teamNameService.getTeamNameByTeamId(competitor1.getId()));
 
             if(null != competitor1.getInningsScores() && competitor1.getInningsScores().size() > 0 ) {
-                Optional<InningsScoreCard> inningsScoreCardOptional = competitor1.getInningsScores().values().stream().filter(inningsScoreCard -> inningsScoreCard.getInningsInfo() != null).findFirst();
-                if(inningsScoreCardOptional.isPresent()){
-                    InningsScoreCard inningsScoreCard = inningsScoreCardOptional.get();
+                competitor1.getInningsScores().values().stream().filter(inningsScoreCard -> inningsScoreCard.getInningsInfo() != null)
+
+                        .forEach(inningsScoreCard -> {
                     if (inningsScoreCard.getInningsInfo() != null) {
                         InningsInfo inningsInfo = inningsScoreCard.getInningsInfo();
-                        game.setTeam1Score(formatScore(inningsInfo));
-                        game.setTeam1Overs(inningsInfo.getOvers());
+                        game.getTeam1Score().add(formatScore(inningsInfo));
+                        game.getTeam1Overs().add(inningsInfo.getOvers());
                     }
 
-                }
+
+                });
             }
 
         }
@@ -206,18 +222,62 @@ public class GameService {
             game.setTeam2Name(teamNameService.getTeamNameByTeamId(competitor2.getId()));
 
             if(null != competitor2.getInningsScores() && competitor2.getInningsScores().size() > 0 ) {
-                Optional<InningsScoreCard> inningsScoreCardOptional = competitor2.getInningsScores().values().stream().filter(inningsScoreCard -> inningsScoreCard.getInningsInfo() != null).findFirst();
-                if(inningsScoreCardOptional.isPresent()){
-                    InningsScoreCard inningsScoreCard = inningsScoreCardOptional.get();
+
+                competitor2.getInningsScores().values().stream().filter(inningsScoreCard -> inningsScoreCard.getInningsInfo() != null).forEach( inningsScoreCard -> {
                     InningsInfo inningsInfo = inningsScoreCard.getInningsInfo();
                     if (inningsScoreCard.getInningsInfo() != null) {
-                        game.setTeam2Score(formatScore(inningsInfo));
-                        game.setTeam2Overs(inningsInfo.getOvers());
+                        game.getTeam2Score().add(formatScore(inningsInfo));
+                        game.getTeam2Overs().add(inningsInfo.getOvers());
+                    }
+
+
+                });
+            }
+        }
+
+
+        youtubeApiService.getYoutubeVideoList(game.getLeagueName());
+        return game;
+    }
+
+    private LiveScore populateLiveTab(TreeMap<Integer, ScoreCard> inningsScorecard, LiveScoreCard liveScoreCard) {
+        LiveScore liveScore = new LiveScore();
+
+        if(null != inningsScorecard && inningsScorecard.size() > 0){
+            ScoreCard latestScoreCard = inningsScorecard.lastEntry().getValue();
+            if(null != latestScoreCard){
+                if(null != latestScoreCard.getBattingScoreCard().getBattingScoreLeaves()){
+                    Optional<BattingScoreLeaf> strikerOptional =  latestScoreCard.getBattingScoreCard().getBattingScoreLeaves().stream().filter(battingScoreLeaf -> battingScoreLeaf.getPlayerId() == liveScoreCard.getStriker())
+                            .findFirst();
+                    if(strikerOptional.isPresent()){
+                        liveScore.setStriker(strikerOptional.get());
+                    }
+
+                    Optional<BattingScoreLeaf> nonStrikerOptional =  latestScoreCard.getBattingScoreCard().getBattingScoreLeaves().stream().filter(battingScoreLeaf -> battingScoreLeaf.getPlayerId() == liveScoreCard.getNonStriker())
+                            .findFirst();
+                    if(nonStrikerOptional.isPresent()){
+                        liveScore.setNonStriker(nonStrikerOptional.get());
+                    }
+                }
+
+                if(null != latestScoreCard.getBowlingScoreCard().getBowlingScoreLeaves()){
+                    Optional<BowlingScoreLeaf> bowlerOptional =  latestScoreCard.getBowlingScoreCard().getBowlingScoreLeaves().stream().filter(bowlingScoreLeaf -> bowlingScoreLeaf.getPlayerId() == liveScoreCard.getCurrentBowler())
+                            .findFirst();
+                    if(bowlerOptional.isPresent()){
+                        liveScore.setBowler(bowlerOptional.get());
+                    }
+
+                    Optional<BowlingScoreLeaf> otherBowlerOptional =  latestScoreCard.getBowlingScoreCard().getBowlingScoreLeaves().stream().filter(bowlingScoreLeaf -> bowlingScoreLeaf.getPlayerId() == liveScoreCard.getPreviousBowler())
+                            .findFirst();
+                    if(otherBowlerOptional.isPresent()){
+                        liveScore.setOtherBowler(otherBowlerOptional.get());
                     }
                 }
             }
         }
-        return game;
+
+        return liveScore;
+
     }
 
 
@@ -238,6 +298,7 @@ public class GameService {
     private BowlingScoreLeaf populateBowlingScoreLeaf(BowlerCard bowlerCard) {
         BowlingScoreLeaf bowlingScoreLeaf = new BowlingScoreLeaf();
         if(null != bowlerCard){
+            bowlingScoreLeaf.setPlayerId(bowlerCard.getPlayerId());
             bowlingScoreLeaf.setOvers(bowlerCard.getOvers());
             bowlingScoreLeaf.setMaidens(Integer.valueOf(bowlerCard.getMaidens()));
             bowlingScoreLeaf.setRuns(Integer.valueOf(bowlerCard.getConceded()));
@@ -252,8 +313,11 @@ public class GameService {
     private BattingScoreCard populateBattingScoreCard(BattingCard battingCard) {
         BattingScoreCard battingScoreCard = new BattingScoreCard();
         if(null != battingCard.getBatsmanCardSet()) {
-            battingCard.getBatsmanCardSet().stream().sorted().forEach(batsmanCard -> {
+            battingCard.getBatsmanCardSet().stream().sorted().filter(batsmanCard -> batsmanCard.isBatted()).forEach(batsmanCard -> {
                 battingScoreCard.getBattingScoreLeaves().add(populateBattingScoreLeaf(batsmanCard));
+            });
+            battingCard.getBatsmanCardSet().stream().sorted().filter(batsmanCard -> ! batsmanCard.isBatted()).forEach(batsmanCard -> {
+                battingScoreCard.getYetToBat().add(populateBattingScoreLeaf(batsmanCard));
             });
 
         }
@@ -265,6 +329,7 @@ public class GameService {
 
         BattingScoreLeaf battingScoreLeaf = new BattingScoreLeaf();
         if(null != batsmanCard){
+            battingScoreLeaf.setPlayerId(batsmanCard.getPlayerId());
             battingScoreLeaf.setBalls(Integer.valueOf(batsmanCard.getBalls()));
             battingScoreLeaf.setDismissalText(batsmanCard.getBattingDescription());
             battingScoreLeaf.setRuns(Integer.valueOf(batsmanCard.getRuns()));
@@ -476,9 +541,10 @@ public class GameService {
                         Category BattingStatsCategory = competitorLineScoreStats.getSplits().getCategories().get(0);
                         if (null != BattingStatsCategory && null != BattingStatsCategory.getStats()) {
                             InningsInfo inningsInfo = new InningsInfo();
-                            inningsInfo.setBattingTeamId(competitor.getId());
                             inningsInfo.setBattingTeamName(teamNameService.getTeamNameByTeamId(competitor.getId()));
+                            inningsInfo.setBattingTeamId(competitor.getId());
 
+                            populateInningsName(competitorLineScore, inningsInfo);
 
                             BattingStatsCategory.getStats().forEach(stat -> {
                                 switch (stat.getName()) {
@@ -542,165 +608,211 @@ public class GameService {
 
     }
 
-    private void populateRoster(GameAggregate gameAggregate) {
-        if(gameAggregate.getGameInfo().getGameStatus().equals(GameStatus.post) || gameAggregate.getGameInfo().getGameStatus().equals(GameStatus.live)){
-            if(null != gameAggregate.getCompetitor1())
-                populateCompetitorRoster(gameAggregate.getCompetitor1());
-            if(null != gameAggregate.getCompetitor2())
-                populateCompetitorRoster(gameAggregate.getCompetitor2());
+    private void populateInningsName(CompetitorLineScore competitorLineScore, InningsInfo inningsInfo) {
+        switch (competitorLineScore.getPeriod()) {
+
+            case 1:
+                inningsInfo.setInningsName("1st innings");
+                break;
+
+
+            case 2:
+                inningsInfo.setInningsName("2nd innings");
+                break;
+
+            case 3:
+                inningsInfo.setInningsName("3rd innings");
+                break;
+
+            case 4:
+                inningsInfo.setInningsName("4th innings");
+                break;
+
+            default:
+                inningsInfo.setInningsName("Extra innings");
         }
     }
 
-    private void populateCompetitorRoster(Competitor competitor) {
-        Roster roster = restTemplate.getForObject(competitor.getRosterRef(), Roster.class);
-        if (null != roster && null != roster.getEntries()) {
-            AtomicInteger unknownRosterIndex = new AtomicInteger(101);
+    private void populateRoster(GameAggregate gameAggregate) {
+        if(gameAggregate.getGameInfo().getGameStatus().equals(GameStatus.post) || gameAggregate.getGameInfo().getGameStatus().equals(GameStatus.live)){
 
-            roster.getEntries().forEach(playerRoster -> {
-                log.debug("playerRoster :{}",playerRoster);
+            LiveScoreCard liveScoreCard = gameAggregate.getLiveScoreCard();
+            if(null == liveScoreCard) gameAggregate.setLiveScoreCard(new LiveScoreCard());
 
-                RosterLineScores rosterLineScores = restTemplate.getForObject(playerRoster.getLinescores().get$ref(), RosterLineScores.class);
+            populateCompetitorRoster(gameAggregate.getCompetitor1(),gameAggregate.getLiveScoreCard());
+            populateCompetitorRoster(gameAggregate.getCompetitor2(), gameAggregate.getLiveScoreCard());
+        }
+    }
 
-                if (null != rosterLineScores.getItems() && rosterLineScores.getItems().size() > 0) {
-                    log.debug("playerRoster1 :{}",playerRoster);
-                    rosterLineScores.getItems().forEach(rosterLineScore -> {
-                        log.debug("playerRoster2 :{}, linescore {}",playerRoster, rosterLineScore);
+    private void populateCompetitorRoster(Competitor competitor, LiveScoreCard liveScoreCard) {
+        if(null != competitor) {
+            Roster roster = restTemplate.getForObject(competitor.getRosterRef(), Roster.class);
+            if (null != roster && null != roster.getEntries()) {
+                AtomicInteger unknownRosterIndex = new AtomicInteger(101);
+
+                roster.getEntries().forEach(playerRoster -> {
+                    log.debug("playerRoster :{}", playerRoster);
+
+                    if("striker".equalsIgnoreCase(playerRoster.getActiveName())){
+                        liveScoreCard.setStriker(playerRoster.getPlayerId()*13);
+                    }
+
+                    if("non-striker".equalsIgnoreCase(playerRoster.getActiveName())){
+                        liveScoreCard.setNonStriker(playerRoster.getPlayerId()*13);
+                    }
+
+                    if("current bowler".equalsIgnoreCase(playerRoster.getActiveName())){
+                        liveScoreCard.setCurrentBowler(playerRoster.getPlayerId()*13);
+                    }
+
+                    if("previous bowler".equalsIgnoreCase(playerRoster.getActiveName())){
+                        liveScoreCard.setPreviousBowler(playerRoster.getPlayerId()*13);
+                    }
 
 
-                        LineScoreStatistics stats = restTemplate.getForObject(rosterLineScore.getStatistics(), LineScoreStatistics.class);
+                    RosterLineScores rosterLineScores = restTemplate.getForObject(playerRoster.getLinescores().get$ref(), RosterLineScores.class);
 
-                        InningsScoreCard inningsScoreCard;
-                        if (competitor.getInningsScores().containsKey(rosterLineScore.getPeriod())) {
-                            inningsScoreCard = competitor.getInningsScores().get(rosterLineScore.getPeriod());
-                        } else {
-                            inningsScoreCard = new InningsScoreCard();
+                    if (null != rosterLineScores.getItems() && rosterLineScores.getItems().size() > 0) {
+                        log.debug("playerRoster1 :{}", playerRoster);
+                        rosterLineScores.getItems().forEach(rosterLineScore -> {
+                            log.debug("playerRoster2 :{}, linescore {}", playerRoster, rosterLineScore);
 
-                            competitor.getInningsScores().put(rosterLineScore.getPeriod(), inningsScoreCard);
-                        }
-                        if (rosterLineScore.isBatting()) {
-                            log.debug("playerRoster3 :{}, linescore {}",playerRoster, rosterLineScore);
 
-                            BattingCard battingCard;
-                            if (null == inningsScoreCard.getBattingCard()) {
-                                battingCard = new BattingCard();
-                                battingCard.setBatsmanCardSet(new TreeSet<>());
-                                inningsScoreCard.setBattingCard(battingCard);
+                            LineScoreStatistics stats = restTemplate.getForObject(rosterLineScore.getStatistics(), LineScoreStatistics.class);
+
+                            InningsScoreCard inningsScoreCard;
+                            if (competitor.getInningsScores().containsKey(rosterLineScore.getPeriod())) {
+                                inningsScoreCard = competitor.getInningsScores().get(rosterLineScore.getPeriod());
                             } else {
-                                battingCard = inningsScoreCard.getBattingCard();
+                                inningsScoreCard = new InningsScoreCard();
+
+                                competitor.getInningsScores().put(rosterLineScore.getPeriod(), inningsScoreCard);
                             }
-                            BatsmanCard batsmanCard = new BatsmanCard();
-                            batsmanCard.setPlayerId(playerRoster.getPlayerId()*13);
-                            batsmanCard.setPlayerName(playerNameService.getPlayerName(playerRoster.getPlayerId()));
+                            if (rosterLineScore.isBatting()) {
+                                log.debug("playerRoster3 :{}, linescore {}", playerRoster, rosterLineScore);
 
-                            try {
-                                stats.getSplits().getCategories().get(0).getStats().stream().forEach(stat -> {
-                                    switch (stat.getName()) {
-                                        case "ballsFaced":
-                                            batsmanCard.setBalls(stat.getDisplayValue());
-                                            break;
+                                BattingCard battingCard;
+                                if (null == inningsScoreCard.getBattingCard()) {
+                                    battingCard = new BattingCard();
+                                    battingCard.setBatsmanCardSet(new TreeSet<>());
+                                    inningsScoreCard.setBattingCard(battingCard);
+                                } else {
+                                    battingCard = inningsScoreCard.getBattingCard();
+                                }
+                                BatsmanCard batsmanCard = new BatsmanCard();
+                                batsmanCard.setPlayerId(playerRoster.getPlayerId() * 13);
+                                batsmanCard.setPlayerName(playerNameService.getPlayerName(playerRoster.getPlayerId()));
 
-                                        case "batted":
-                                            batsmanCard.setBatted(stat.getDisplayValue().equals("1") ? true : false);
-                                            break;
+                                try {
+                                    stats.getSplits().getCategories().get(0).getStats().stream().forEach(stat -> {
+                                        switch (stat.getName()) {
+                                            case "ballsFaced":
+                                                batsmanCard.setBalls(stat.getDisplayValue());
+                                                break;
 
-                                        case "outs":
-                                            batsmanCard.setOut(stat.getDisplayValue().equals("1") ? true : false);
-                                            break;
+                                            case "batted":
+                                                batsmanCard.setBatted(stat.getDisplayValue().equals("1") ? true : false);
+                                                break;
 
-                                        case "runs":
-                                            batsmanCard.setRuns(stat.getDisplayValue());
-                                            break;
+                                            case "outs":
+                                                batsmanCard.setOut(stat.getDisplayValue().equals("1") ? true : false);
+                                                break;
 
-                                        case "fours":
-                                            batsmanCard.setFours(stat.getDisplayValue());
-                                            break;
+                                            case "runs":
+                                                batsmanCard.setRuns(stat.getDisplayValue());
+                                                break;
 
-                                        case "sixes":
-                                            batsmanCard.setSixes(stat.getDisplayValue());
-                                            break;
-                                    }
-                                });
-                                if (null != stats.getSplits().getBatting() && null != stats.getSplits().getBatting().getOutDetails() && null != stats.getSplits().getBatting().getOutDetails().getShortText())
-                                    batsmanCard.setBattingDescription(stats.getSplits().getBatting().getOutDetails().getShortText().replace("&dagger;", "").replace("&amp;", "&"));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            batsmanCard.setPosition(rosterLineScore.getOrder()> 0 && batsmanCard.isBatted() ? rosterLineScore.getOrder():unknownRosterIndex.incrementAndGet());
-                            log.debug("playerRoster4 :{}, linescore {}, batsmanCard {}",playerRoster, rosterLineScore,batsmanCard);
+                                            case "fours":
+                                                batsmanCard.setFours(stat.getDisplayValue());
+                                                break;
 
-                            battingCard.getBatsmanCardSet().add(batsmanCard);
-                        } else {
-                            BowlingCard bowlingCard;
-                            if (null == inningsScoreCard.getBowlingCard()) {
-                                bowlingCard = new BowlingCard();
-                                bowlingCard.setBowlerCardSet(new TreeSet<>());
-                                inningsScoreCard.setBowlingCard(bowlingCard);
+                                            case "sixes":
+                                                batsmanCard.setSixes(stat.getDisplayValue());
+                                                break;
+                                        }
+                                    });
+                                    if (null != stats.getSplits().getBatting() && null != stats.getSplits().getBatting().getOutDetails() && null != stats.getSplits().getBatting().getOutDetails().getShortText())
+                                        batsmanCard.setBattingDescription(stats.getSplits().getBatting().getOutDetails().getShortText().replace("&dagger;", "").replace("&amp;", "&"));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                batsmanCard.setPosition(rosterLineScore.getOrder() > 0 && batsmanCard.isBatted() ? rosterLineScore.getOrder() : unknownRosterIndex.incrementAndGet());
+                                log.debug("playerRoster4 :{}, linescore {}, batsmanCard {}", playerRoster, rosterLineScore, batsmanCard);
+
+                                battingCard.getBatsmanCardSet().add(batsmanCard);
                             } else {
-                                bowlingCard = inningsScoreCard.getBowlingCard();
+                                BowlingCard bowlingCard;
+                                if (null == inningsScoreCard.getBowlingCard()) {
+                                    bowlingCard = new BowlingCard();
+                                    bowlingCard.setBowlerCardSet(new TreeSet<>());
+                                    inningsScoreCard.setBowlingCard(bowlingCard);
+                                } else {
+                                    bowlingCard = inningsScoreCard.getBowlingCard();
+                                }
+                                BowlerCard bowlerCard = new BowlerCard();
+                                bowlerCard.setPlayerId(playerRoster.getPlayerId() * 13);
+                                bowlerCard.setPlayerName(playerNameService.getPlayerName(playerRoster.getPlayerId()));
+                                try {
+                                    stats.getSplits().getCategories().get(0).getStats().stream().forEach(stat -> {
+                                        switch (stat.getName()) {
+                                            case "overs":
+                                                bowlerCard.setOvers(stat.getDisplayValue());
+                                                break;
+
+                                            case "bowled":
+                                                bowlerCard.setBowled(stat.getDisplayValue().equals("1") ? true : false);
+                                                break;
+
+                                            case "conceded":
+                                                bowlerCard.setConceded(stat.getDisplayValue());
+                                                break;
+
+                                            case "maidens":
+                                                bowlerCard.setMaidens(stat.getDisplayValue());
+                                                break;
+
+                                            case "noballs":
+                                                bowlerCard.setNoballs(stat.getDisplayValue());
+                                                break;
+                                            case "wides":
+                                                bowlerCard.setWides(stat.getDisplayValue());
+                                                break;
+
+                                            case "byes":
+                                                bowlerCard.setByes(stat.getDisplayValue());
+                                                break;
+
+                                            case "legbyes":
+                                                bowlerCard.setLegbyes(stat.getDisplayValue());
+                                                break;
+
+                                            case "wickets":
+                                                bowlerCard.setWickets(stat.getDisplayValue());
+                                                break;
+
+                                            case "stumped":
+                                                bowlerCard.setStumped(stat.getDisplayValue());
+                                                break;
+
+                                            case "caught":
+                                                bowlerCard.setCaught(stat.getDisplayValue());
+                                                break;
+                                        }
+                                    });
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                bowlerCard.setLive(playerRoster.getActiveName());
+                                bowlerCard.setPosition(rosterLineScore.getOrder());
+                                if (bowlerCard.isBowled())
+                                    bowlingCard.getBowlerCardSet().add(bowlerCard);
                             }
-                            BowlerCard bowlerCard = new BowlerCard();
-                            bowlerCard.setPlayerId(playerRoster.getPlayerId()*13);
-                            bowlerCard.setPlayerName(playerNameService.getPlayerName(playerRoster.getPlayerId()));
-                            try {
-                                stats.getSplits().getCategories().get(0).getStats().stream().forEach(stat -> {
-                                    switch (stat.getName()) {
-                                        case "overs":
-                                            bowlerCard.setOvers(stat.getDisplayValue());
-                                            break;
+                        });
+                    }
 
-                                        case "bowled":
-                                            bowlerCard.setBowled(stat.getDisplayValue().equals("1") ? true : false);
-                                            break;
-
-                                        case "conceded":
-                                            bowlerCard.setConceded(stat.getDisplayValue());
-                                            break;
-
-                                        case "maidens":
-                                            bowlerCard.setMaidens(stat.getDisplayValue());
-                                            break;
-
-                                        case "noballs":
-                                            bowlerCard.setNoballs(stat.getDisplayValue());
-                                            break;
-                                        case "wides":
-                                            bowlerCard.setWides(stat.getDisplayValue());
-                                            break;
-
-                                        case "byes":
-                                            bowlerCard.setByes(stat.getDisplayValue());
-                                            break;
-
-                                        case "legbyes":
-                                            bowlerCard.setLegbyes(stat.getDisplayValue());
-                                            break;
-
-                                        case "wickets":
-                                            bowlerCard.setWickets(stat.getDisplayValue());
-                                            break;
-
-                                        case "stumped":
-                                            bowlerCard.setStumped(stat.getDisplayValue());
-                                            break;
-
-                                        case "caught":
-                                            bowlerCard.setCaught(stat.getDisplayValue());
-                                            break;
-                                    }
-                                });
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            bowlerCard.setLive(playerRoster.getActiveName());
-                            bowlerCard.setPosition(rosterLineScore.getOrder());
-                            if (bowlerCard.isBowled())
-                                bowlingCard.getBowlerCardSet().add(bowlerCard);
-                        }
-                    });
-                }
-
-            });
+                });
+            }
         }
     }
 

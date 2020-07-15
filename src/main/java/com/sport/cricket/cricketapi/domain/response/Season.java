@@ -1,5 +1,6 @@
 package com.sport.cricket.cricketapi.domain.response;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Season {
@@ -9,6 +10,7 @@ public class Season {
     private Date endDate;
     private Integer year;
     private Integer id;
+    private ArrayList<String> teamNames;
 
     public String getName() {
         return name;
@@ -28,6 +30,14 @@ public class Season {
 
     public Date getStartDate() {
         return startDate;
+    }
+
+    public ArrayList<String> getTeamNames() {
+        return teamNames;
+    }
+
+    public void setTeamNames(ArrayList<String> teamNames) {
+        this.teamNames = teamNames;
     }
 
     public void setStartDate(Date startDate) {

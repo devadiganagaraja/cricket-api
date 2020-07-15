@@ -2,6 +2,7 @@ package com.sport.cricket.cricketapi.domain.response;
 
 public class BattingScoreLeaf {
     private String playerName;
+    private long playerId;
     private String dismissalText;
     private int runs;
     private int balls;
@@ -9,6 +10,13 @@ public class BattingScoreLeaf {
     private int sixes;
     private String strikeRate;
 
+    public long getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(long playerId) {
+        this.playerId = playerId;
+    }
 
     public String getPlayerName() {
         return playerName;

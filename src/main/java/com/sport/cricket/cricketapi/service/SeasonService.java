@@ -4,7 +4,6 @@ import com.sport.cricket.cricketapi.config.LeagueYamlConfig;
 import com.sport.cricket.cricketapi.domain.persistance.GameAggregate;
 import com.sport.cricket.cricketapi.domain.persistance.QSeasonAggregate;
 import com.sport.cricket.cricketapi.domain.persistance.SeasonAggregate;
-import com.sport.cricket.cricketapi.domain.persistance.TeamAggregate;
 import com.sport.cricket.cricketapi.domain.response.*;
 import com.sport.cricket.cricketapi.domain.source.Event;
 import com.sport.cricket.cricketapi.domain.source.ItemListing;
@@ -64,9 +63,7 @@ public class SeasonService {
         List<Season> seasons = new ArrayList<>();
          seasonRepository.findAll(qSeasonAggregate.leagueId.eq(league)).forEach(seasonDb -> {
              Season season = populateDomainSeason(seasonDb);
-             if(season.getYear() <2020) {
-                 seasons.add(season);
-             }
+             seasons.add(season);
          });
 
 

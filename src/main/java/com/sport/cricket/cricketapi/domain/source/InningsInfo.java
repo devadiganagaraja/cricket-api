@@ -15,6 +15,7 @@ public class InningsInfo {
     private long battingTeamId;
     private String battingTeamName;
     private boolean liveInnings;
+    private String inningsName;
 
     public int getExtras() {
         return extras;
@@ -80,6 +81,14 @@ public class InningsInfo {
 
     public void setLegByes(int legByes) {
         this.legByes = legByes;
+    }
+
+    public String getInningsName() {
+        return inningsName;
+    }
+
+    public void setInningsName(String inningsName) {
+        this.inningsName = inningsName;
     }
 
     public int getByes() {

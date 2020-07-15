@@ -9,6 +9,9 @@ public class BowlingScoreLeaf {
     private int maidens;
     private String economyRate;
 
+    private long playerId;
+
+
     public String getPlayerName() {
         return playerName;
     }
@@ -24,6 +27,14 @@ public class BowlingScoreLeaf {
 
     public void setWickets(int wickets) {
         this.wickets = wickets;
+    }
+
+    public long getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(long playerId) {
+        this.playerId = playerId;
     }
 
     public int getRuns() {
