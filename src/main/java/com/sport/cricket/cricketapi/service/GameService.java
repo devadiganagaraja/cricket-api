@@ -1,13 +1,13 @@
 package com.sport.cricket.cricketapi.service;
 
-import com.sport.cricket.cricketapi.domain.common.*;
-import com.sport.cricket.cricketapi.domain.common.Competitor;
-import com.sport.cricket.cricketapi.domain.persistance.GameAggregate;
-import com.sport.cricket.cricketapi.domain.persistance.QGameAggregate;
+import com.cricketfoursix.cricketdomain.aggregate.GameAggregate;
+import com.cricketfoursix.cricketdomain.aggregate.QGameAggregate;
+import com.cricketfoursix.cricketdomain.common.game.*;
+import com.cricketfoursix.cricketdomain.common.game.Competitor;
+import com.cricketfoursix.cricketdomain.repository.GameRepository;
 import com.sport.cricket.cricketapi.domain.persistance.SeasonAggregate;
 import com.sport.cricket.cricketapi.domain.response.*;
 import com.sport.cricket.cricketapi.domain.source.*;
-import com.sport.cricket.cricketapi.repository.GameRepository;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +47,11 @@ public class GameService {
 
     @Autowired
     YoutubeApiService youtubeApiService;
+
+
+
+    @Autowired
+    Map<String, GameAggregate> liveGamesCache;
 
 
     private static DecimalFormat overFormat = new DecimalFormat("#.#");

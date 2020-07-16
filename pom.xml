@@ -69,6 +69,12 @@
 			<version>v3-rev222-1.25.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.cricketfoursix</groupId>
+			<artifactId>cricket-domain</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

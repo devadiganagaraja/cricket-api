@@ -1,6 +1,7 @@
 package com.sport.cricket.cricketapi.domain.response;
 
-import com.sport.cricket.cricketapi.domain.source.InningsInfo;
+
+import com.cricketfoursix.cricketdomain.common.game.InningsInfo;
 
 import java.util.ArrayList;
 import java.util.List;

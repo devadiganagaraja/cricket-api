@@ -1,6 +1,7 @@
 package com.sport.cricket.cricketapi.domain.response;
 
-import com.sport.cricket.cricketapi.domain.common.ManOfTheMatch;
+
+import com.cricketfoursix.cricketdomain.common.game.ManOfTheMatch;
 
 import java.util.ArrayList;
 import java.util.Date;

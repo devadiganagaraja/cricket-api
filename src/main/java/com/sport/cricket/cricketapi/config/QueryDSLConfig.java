@@ -1,5 +1,6 @@
 package com.sport.cricket.cricketapi.config;
 
+import com.cricketfoursix.cricketdomain.aggregate.QGameAggregate;
 import com.sport.cricket.cricketapi.domain.persistance.*;
 
 
