@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -75,7 +73,7 @@ public class GameService {
             game.setToss(gameInfo.getToss());
             game.setGameStatus(gameInfo.getGameStatus().toString());
 
-            GameSummary gameSummary = gameAggregate.getGameSummary();
+            GameSummary gameSummary = gameAggregate.getGameInfo().getGameSummary();
             if(null != gameSummary){
                 Award award = gameSummary.getPlayerOfMatch();
                 ManOfTheMatch manOfTheMatch = new ManOfTheMatch();
@@ -197,7 +195,7 @@ public class GameService {
 
         }
 
-        GameClass gameClass = gameAggregate.getGameClass();
+        GameClass gameClass = gameAggregate.getGameInfo().getGameClass();
         if(null != gameInfo) {
             game.setGameClass(gameClass.getShortName());
         }
@@ -425,7 +423,7 @@ public class GameService {
             gameClass.setId(Integer.valueOf(Integer.valueOf(eventClass.getInternationalClassId()) > 0 ? eventClass.getInternationalClassId() : eventClass.getGeneralClassId()));
             gameClass.setName(eventClass.getName());
             gameClass.setShortName(eventClass.getEventType());
-            gameAggregate.setGameClass(gameClass);
+            gameAggregate.getGameInfo().setGameClass(gameClass);
         }
     }
 
@@ -486,40 +484,13 @@ public class GameService {
             Competition competition = event.getCompetitions().get(0);
 
             log.info("competition::::{},competition");
-            populateTossNote(gameAggregate, competition);
+            //populateTossNote(gameAggregate, competition);
         }
         populateGameStatus(gameAggregate);
         gameRepository.save(gameAggregate);
     }
 
-    private void populateTossNote(GameAggregate gameAggregate, Competition competition) {
-        if(null != competition.getNotes()){
-            Optional<Note> noteOptional = competition.getNotes().stream().filter(note -> note.getType().equalsIgnoreCase("toss")).findFirst();
-            if(noteOptional.isPresent()){
-                Note note = noteOptional.get();
-                log.info("note::::{},note");
 
-                String toss = note.getText();
-                log.info("toss::::{},toss");
-                if(StringUtils.isNotBlank(toss)){
-                    String [] tossArray = toss.split(",");
-                    if(tossArray.length > 0) {
-                        gameAggregate.getGameInfo().setToss(tossArray[0] + " won the toss.");
-                        if(tossArray.length > 1) {
-                            if(tossArray[1].toLowerCase().contains("bat")) {
-                                gameAggregate.getGameInfo().setToss(gameAggregate.getGameInfo().getToss() + " Opted to Bat.");
-                            }else{
-                                gameAggregate.getGameInfo().setToss(gameAggregate.getGameInfo().getToss()+  " Opted to Bowl.");
-                            }
-
-                        }
-                    }
-
-                }
-
-            }
-        }
-    }
 
     private void populateGameStatus(GameAggregate gameAggregate) {
         EventStatus eventStatus = restTemplate.getForObject(gameAggregate.getGameStatusApiRef(), EventStatus.class);
@@ -836,12 +807,12 @@ public class GameService {
                     Award award = new Award();
                     award.setPlayerId(Long.valueOf(featuredAthletes.getPlayerId()) * 13);
                     award.setTeamId(Long.valueOf(featuredAthletes.getTeam().get$ref().split("teams/")[1]) * 13);
-                    if (null == gameAggregate.getGameSummary())
-                        gameAggregate.setGameSummary(new GameSummary());
+                    if (null == gameAggregate.getGameInfo().getGameSummary())
+                        gameAggregate.getGameInfo().setGameSummary(new GameSummary());
                     if ("Player Of The Match".equalsIgnoreCase(featuredAthletes.getDisplayName())) {
-                        gameAggregate.getGameSummary().setPlayerOfMatch(award);
+                        gameAggregate.getGameInfo().getGameSummary().setPlayerOfMatch(award);
                     } else if ("Player Of The Series".equalsIgnoreCase(featuredAthletes.getDisplayName())) {
-                        gameAggregate.getGameSummary().setPlayerOfSeries(award);
+                        gameAggregate.getGameInfo().getGameSummary().setPlayerOfSeries(award);
                     }
                 });
             }

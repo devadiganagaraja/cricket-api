@@ -1,9 +1,12 @@
 package com.sport.cricket.cricketapi.config;
 
 import com.cricketfoursix.cricketdomain.aggregate.QGameAggregate;
-import com.sport.cricket.cricketapi.domain.persistance.*;
 
 
+import com.cricketfoursix.cricketdomain.aggregate.QLeagueAggregate;
+import com.sport.cricket.cricketapi.domain.persistance.QSeasonAggregate;
+import com.sport.cricket.cricketapi.domain.persistance.QTeamAggregate;
+import com.sport.cricket.cricketapi.domain.persistance.QUserAggregate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -1,17 +1,14 @@
 package com.sport.cricket.cricketapi.service;
 
-import com.sport.cricket.cricketapi.config.LeagueYamlConfig;
-import com.sport.cricket.cricketapi.domain.persistance.LeagueAggregate;
-import com.sport.cricket.cricketapi.domain.response.League;
-import com.sport.cricket.cricketapi.repository.LeagueRepository;
+import com.cricketfoursix.cricketdomain.aggregate.LeagueAggregate;
+import com.cricketfoursix.cricketdomain.common.league.LeagueInfo;
+import com.cricketfoursix.cricketdomain.common.league.LeagueSeason;
+import com.cricketfoursix.cricketdomain.repository.LeagueRepository;
+import com.sport.cricket.cricketapi.domain.response.league.LeagueDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 public class LeagueService {
@@ -20,61 +17,84 @@ public class LeagueService {
     @Autowired
     LeagueRepository leagueRepository;
 
-    @Autowired
-    LeagueYamlConfig leagueYamlConfig;
 
 
-    @Autowired
-    RestTemplate restTemplate;
-
-    public List<League> getLeagues(){
-        return leagueRepository.findAll().stream().map(league -> populateDomainLeague(league)).collect(Collectors.toList());
-    }
-
-    public League getLeague(Integer league) {
-
-        Optional<LeagueAggregate> leagueDbOpt = leagueRepository.findById(league);
-
-        if(leagueDbOpt.isPresent()){
-            return populateDomainLeague(leagueDbOpt.get());
-        }else
-            return null;
-    }
 
 
-    private League populateDomainLeague(LeagueAggregate leagueAggregate) {
-        League leagueDomain = new League();
-        leagueDomain.setId(leagueAggregate.getLeagueId());
-        leagueDomain.setName(leagueAggregate.getName());
-        leagueDomain.setAbbreviation(leagueAggregate.getAbbreviation());
-        leagueDomain.setTournament(leagueAggregate.isTournament());
-        return leagueDomain;
+    public List<LeagueDetails> getLeagues() {
+        List<LeagueDetails> leagueDetailsList = new ArrayList<>();
+        List<com.cricketfoursix.cricketdomain.aggregate.LeagueAggregate> leagueAggregates = leagueRepository.findAll();
+        if(null != leagueAggregates){
+            leagueAggregates.forEach(leagueAggregate -> {
+                LeagueInfo leagueInfo = leagueAggregate.getLeagueInfo();
+                if(isTrendingLeague(leagueInfo)){
+                    LeagueDetails leagueDetails = new LeagueDetails();
+                    leagueDetails.setLeagueId(leagueAggregate.getId());
+                    leagueDetails.setLeagueName(leagueInfo.getLeagueName());
+                    leagueDetailsList.add(leagueDetails);
+                }
+            });
+        }
+        return  leagueDetailsList;
     }
 
 
-    private LeagueAggregate populateDBLeague(League league) {
-        LeagueAggregate leagueAggregate = new LeagueAggregate();
-        leagueAggregate.setLeagueId(league.getId());
-        leagueAggregate.setName(league.getName());
-        leagueAggregate.setAbbreviation(league.getAbbreviation());
-        leagueAggregate.setTournament(league.isTournament());
-        return leagueAggregate;
+    public LeagueDetails getLeagueInfo(Long leagueId) {
+        Optional<LeagueAggregate> leagueAggregateOptional = leagueRepository.findById(leagueId);
+        if(leagueAggregateOptional.isPresent()){
+            LeagueDetails leagueDetails = new LeagueDetails();
+            LeagueAggregate leagueAggregate =  leagueAggregateOptional.get();
+            leagueDetails.setLeagueId(leagueAggregate.getId());
+            LeagueInfo leagueInfo = leagueAggregate.getLeagueInfo();
+            leagueDetails.setLeagueName(leagueInfo.getLeagueName());
+            leagueDetails.setLeagueSeasons(new ArrayList(leagueInfo.getLeagueSeasonMap().values()));
+            return leagueDetails;
+
+        }
+        else return null;
     }
 
 
-    @Scheduled(fixedRate = 500000l)
-    private void populateLeagues() {
+    private boolean isTrendingLeague(LeagueInfo leagueInfo) {
+        Map<Integer, LeagueSeason> seasonsMap =  leagueInfo.getLeagueSeasonMap();
+        Optional<LeagueSeason> leagueSeasonOpt = geltLatestLeagueSeason(seasonsMap);
+        if(leagueSeasonOpt.isPresent()){
+            LeagueSeason leagueSeason = leagueSeasonOpt.get();
+            Date startDate = leagueSeason.getStartDate();
+            Date endDate = leagueSeason.getEndDate();
 
-        leagueYamlConfig.getLeagues().forEach(leagueId ->{
+            if(null != startDate ){
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, 10);
+                if(startDate.compareTo(cal.getTime()) > 0){
+                    return false;
+                }
+            }
+            if(null != endDate ){
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, -10);
+                if(endDate.compareTo(cal.getTime()) < 0){
+                    return false;
+                }
+            }
+        }
 
-            League league = restTemplate.getForObject("http://new.core.espnuk.org/v2/sports/cricket/leagues/"+leagueId, League.class);
-
-            leagueRepository.save(populateDBLeague(league));
-
-        });
-
-
+        return true;
     }
+
+
+    private Optional<LeagueSeason> geltLatestLeagueSeason(Map<Integer, LeagueSeason> seasonsMap) {
+        Optional<LeagueSeason> leagueSeasonOpt = Optional.empty();
+        if(null != seasonsMap && seasonsMap.size() > 0 ){
+            List<Integer> seasonKeyList =  new ArrayList<>(seasonsMap.keySet());
+            Collections.sort(seasonKeyList);
+            leagueSeasonOpt = Optional.ofNullable(seasonsMap.get(seasonKeyList.get(seasonKeyList.size() -1)));
+
+        }
+        return leagueSeasonOpt;
+    }
+
+
 
 
 

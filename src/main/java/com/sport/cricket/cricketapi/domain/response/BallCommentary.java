@@ -1,35 +1,66 @@
 package com.sport.cricket.cricketapi.domain.response;
 
+import com.cricketfoursix.cricketdomain.domain.bbb.BallSummary;
+import com.cricketfoursix.cricketdomain.domain.bbb.BatsmanSummary;
+import com.cricketfoursix.cricketdomain.domain.bbb.BowlerSummary;
+import com.cricketfoursix.cricketdomain.domain.bbb.Dismissal;
+
 import java.util.Objects;
 
 public class BallCommentary implements Comparable<BallCommentary> {
-    private String ballNumber;
-    private String ballText;
-    private String BallSymbol;
+    private String ballId;
+    private BallSummary ballSummary;
+    private BatsmanSummary batsmanSummary;
+    private BatsmanSummary otherBatsmanSummary;
+    private BowlerSummary bowlerSummary;
+    private Dismissal dismissalSummary;
 
-
-    public String getBallNumber() {
-        return ballNumber;
+    public BallSummary getBallSummary() {
+        return ballSummary;
     }
 
-    public void setBallNumber(String ballNumber) {
-        this.ballNumber = ballNumber;
+    public void setBallSummary(BallSummary ballSummary) {
+        this.ballSummary = ballSummary;
     }
 
-    public String getBallText() {
-        return ballText;
+    public BatsmanSummary getBatsmanSummary() {
+        return batsmanSummary;
     }
 
-    public void setBallText(String ballText) {
-        this.ballText = ballText;
+    public void setBatsmanSummary(BatsmanSummary batsmanSummary) {
+        this.batsmanSummary = batsmanSummary;
     }
 
-    public String getBallSymbol() {
-        return BallSymbol;
+    public BatsmanSummary getOtherBatsmanSummary() {
+        return otherBatsmanSummary;
     }
 
-    public void setBallSymbol(String ballSymbol) {
-        BallSymbol = ballSymbol;
+    public void setOtherBatsmanSummary(BatsmanSummary otherBatsmanSummary) {
+        this.otherBatsmanSummary = otherBatsmanSummary;
+    }
+
+    public BowlerSummary getBowlerSummary() {
+        return bowlerSummary;
+    }
+
+    public void setBowlerSummary(BowlerSummary bowlerSummary) {
+        this.bowlerSummary = bowlerSummary;
+    }
+
+    public Dismissal getDismissalSummary() {
+        return dismissalSummary;
+    }
+
+    public void setDismissalSummary(Dismissal dismissalSummary) {
+        this.dismissalSummary = dismissalSummary;
+    }
+
+    public String getBallId() {
+        return ballId;
+    }
+
+    public void setBallId(String ballId) {
+        this.ballId = ballId;
     }
 
     @Override
@@ -37,25 +68,24 @@ public class BallCommentary implements Comparable<BallCommentary> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BallCommentary that = (BallCommentary) o;
-        return Objects.equals(ballNumber, that.ballNumber);
+        return Objects.equals(ballId, that.ballId);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(ballNumber);
+        return Objects.hash(ballId);
     }
 
     @Override
     public int compareTo(BallCommentary o) {
-        return o.ballNumber.compareTo(this.ballNumber);
+        return Double.compare(o.ballSummary.getOverUnique(), this.ballSummary.getOverUnique());
     }
 
     @Override
     public String toString() {
         return "BallCommentary{" +
-                "ballNumber='" + ballNumber + '\'' +
+                "ballId='" + ballId + '\'' +
                 '}';
     }
-
 }
