@@ -24,6 +24,9 @@ public class SeasonService {
     TeamNameService teamNameService;
 
 
+
+
+
     public List<Season> getSeasons(Long league) {
         List<Season> seasonList = new ArrayList<>();
         Optional<LeagueAggregate> leagueAggregateOpt = leagueRepository.findById(league);
@@ -104,8 +107,12 @@ public class SeasonService {
                     Game game = new Game();
                     game.setName(gameInfo.getName());
                     game.setId(gameInfo.getGameId());
+                    game.setLeagueId(gameInfo.getLeagueId());
+                    game.setSeason(gameInfo.getSeason());
                     game.setGameStatus(gameInfo.getGameStatus().toString());
                     game.setDate(gameInfo.getDate());
+                    game.setTeam1Name( teamNameService.getTeamNameByTeamId(gameInfo.getCompetitor1()));
+                    game.setTeam2Name( teamNameService.getTeamNameByTeamId(gameInfo.getCompetitor2()));
                     game.setGameClass(gameInfo.getGameClass().getName());
                     games.add((game));
 

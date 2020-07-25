@@ -25,27 +25,28 @@ public class LeagueService {
             leagueAggregates.forEach(leagueAggregate -> {
                 LeagueInfo leagueInfo = leagueAggregate.getLeagueInfo();
                 if(isTrendingLeague(leagueInfo)){
-                    LeagueDetails leagueDetails = new LeagueDetails();
-                    leagueDetails.setLeagueId(leagueAggregate.getId());
-                    leagueDetails.setLeagueName(leagueInfo.getLeagueName());
-                    leagueDetailsList.add(leagueDetails);
+                    leagueDetailsList.add(populateLeagueDetails(leagueInfo));
                 }
             });
         }
         return  leagueDetailsList;
     }
 
+    private LeagueDetails populateLeagueDetails(  LeagueInfo leagueInfo) {
+        LeagueDetails leagueDetails = new LeagueDetails();
+        leagueDetails.setId(leagueInfo.getLeagueId());
+        leagueDetails.setName(leagueInfo.getLeagueName());
+        leagueDetails.setAbbreviation(leagueInfo.getAbbreviation());
+        leagueDetails.setTournament(leagueInfo.isTournament());
+        return  leagueDetails;
+    }
+
     public LeagueDetails getLeagueInfo(Long leagueId) {
         Optional<LeagueAggregate> leagueAggregateOptional = leagueRepository.findById(leagueId);
         if(leagueAggregateOptional.isPresent()){
-            LeagueDetails leagueDetails = new LeagueDetails();
             LeagueAggregate leagueAggregate =  leagueAggregateOptional.get();
-            leagueDetails.setLeagueId(leagueAggregate.getId());
             LeagueInfo leagueInfo = leagueAggregate.getLeagueInfo();
-            leagueDetails.setLeagueName(leagueInfo.getLeagueName());
-            leagueDetails.setLeagueSeasons(new ArrayList(leagueInfo.getLeagueSeasonMap().values()));
-            return leagueDetails;
-
+            return populateLeagueDetails(leagueInfo);
         }
         else return null;
     }

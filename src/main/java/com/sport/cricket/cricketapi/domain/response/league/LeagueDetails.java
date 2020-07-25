@@ -6,32 +6,44 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LeagueDetails {
-    private Long leagueId;
-    private String leagueName;
-    private List<LeagueSeason> leagueSeasons;
+    private long id;
+    private String abbreviation;
+    private String name;
 
-    public Long getLeagueId() {
-        return leagueId;
+    private boolean tournament;
+
+
+
+    public long getId() {
+        return id;
     }
 
-    public void setLeagueId(Long leagueId) {
-        this.leagueId = leagueId;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public String getLeagueName() {
-        return leagueName;
+    public String getAbbreviation() {
+        return abbreviation;
     }
 
-    public void setLeagueName(String leagueName) {
-        this.leagueName = leagueName;
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
     }
 
-    public List<LeagueSeason> getLeagueSeasons() {
-        return leagueSeasons;
+    public String getName() {
+        return name;
     }
 
-    public void setLeagueSeasons(List<LeagueSeason> leagueSeasons) {
-        this.leagueSeasons = leagueSeasons;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isTournament() {
+        return tournament;
+    }
+
+    public void setTournament(boolean tournament) {
+        this.tournament = tournament;
     }
 }
 
