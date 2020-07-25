@@ -1,9 +1,9 @@
 package com.sport.cricket.cricketapi.service;
 
-import com.sport.cricket.cricketapi.domain.persistance.QUserAggregate;
-import com.sport.cricket.cricketapi.domain.persistance.UserAggregate;
+import com.cricketfoursix.cricketdomain.aggregate.QUserAggregate;
+import com.cricketfoursix.cricketdomain.aggregate.UserAggregate;
+import com.cricketfoursix.cricketdomain.repository.UserRepository;
 import com.sport.cricket.cricketapi.domain.response.User;
-import com.sport.cricket.cricketapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

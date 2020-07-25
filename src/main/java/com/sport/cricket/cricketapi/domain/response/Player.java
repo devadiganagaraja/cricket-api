@@ -1,6 +1,7 @@
 package com.sport.cricket.cricketapi.domain.response;
 
-import com.sport.cricket.cricketapi.domain.common.PlayerStat;
+
+import com.cricketfoursix.cricketdomain.common.PlayerStat;
 
 import java.util.Date;
 import java.util.List;

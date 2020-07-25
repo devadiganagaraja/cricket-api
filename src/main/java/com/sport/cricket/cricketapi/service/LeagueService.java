@@ -10,15 +10,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+
 @Service
 public class LeagueService {
 
-
     @Autowired
     LeagueRepository leagueRepository;
-
-
-
 
 
     public List<LeagueDetails> getLeagues() {
@@ -38,7 +35,6 @@ public class LeagueService {
         return  leagueDetailsList;
     }
 
-
     public LeagueDetails getLeagueInfo(Long leagueId) {
         Optional<LeagueAggregate> leagueAggregateOptional = leagueRepository.findById(leagueId);
         if(leagueAggregateOptional.isPresent()){
@@ -53,7 +49,6 @@ public class LeagueService {
         }
         else return null;
     }
-
 
     private boolean isTrendingLeague(LeagueInfo leagueInfo) {
         Map<Integer, LeagueSeason> seasonsMap =  leagueInfo.getLeagueSeasonMap();
@@ -83,6 +78,7 @@ public class LeagueService {
     }
 
 
+
     private Optional<LeagueSeason> geltLatestLeagueSeason(Map<Integer, LeagueSeason> seasonsMap) {
         Optional<LeagueSeason> leagueSeasonOpt = Optional.empty();
         if(null != seasonsMap && seasonsMap.size() > 0 ){
@@ -93,9 +89,6 @@ public class LeagueService {
         }
         return leagueSeasonOpt;
     }
-
-
-
 
 
 }

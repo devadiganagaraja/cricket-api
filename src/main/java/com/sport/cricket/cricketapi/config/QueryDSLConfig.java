@@ -4,9 +4,8 @@ import com.cricketfoursix.cricketdomain.aggregate.QGameAggregate;
 
 
 import com.cricketfoursix.cricketdomain.aggregate.QLeagueAggregate;
-import com.sport.cricket.cricketapi.domain.persistance.QSeasonAggregate;
-import com.sport.cricket.cricketapi.domain.persistance.QTeamAggregate;
-import com.sport.cricket.cricketapi.domain.persistance.QUserAggregate;
+import com.cricketfoursix.cricketdomain.aggregate.QTeamAggregate;
+import com.cricketfoursix.cricketdomain.aggregate.QUserAggregate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,10 +22,7 @@ public class QueryDSLConfig {
         return new QLeagueAggregate("leagues");
     }
 
-    @Bean
-    public QSeasonAggregate qSeasonAggregate(){
-        return new QSeasonAggregate("seasons");
-    }
+
 
     @Bean
     public QTeamAggregate qTeamAggregate(){

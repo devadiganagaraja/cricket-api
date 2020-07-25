@@ -1,13 +1,13 @@
 package com.sport.cricket.cricketapi.service;
 
-import com.sport.cricket.cricketapi.domain.common.PlayerStat;
-import com.sport.cricket.cricketapi.domain.persistance.PlayerAggregate;
+import com.cricketfoursix.cricketdomain.aggregate.PlayerAggregate;
+import com.cricketfoursix.cricketdomain.common.PlayerStat;
+import com.cricketfoursix.cricketdomain.repository.PlayerRepository;
 import com.sport.cricket.cricketapi.domain.response.Player;
 import com.sport.cricket.cricketapi.domain.source.Athlete;
 import com.sport.cricket.cricketapi.domain.source.AthleteStat;
 import com.sport.cricket.cricketapi.domain.source.Category;
 import com.sport.cricket.cricketapi.domain.source.Style;
-import com.sport.cricket.cricketapi.repository.PlayerRepository;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

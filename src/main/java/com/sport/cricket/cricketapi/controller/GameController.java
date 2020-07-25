@@ -22,6 +22,6 @@ public class GameController {
 
     @GetMapping("/games/{gameId}")
     public Game game(@PathVariable Long gameId, @RequestParam(required = false, defaultValue = "false") boolean refresh) {
-        return gameService.getGame(gameId, refresh);
+        return gameService.getGame(gameId);
     }
 }

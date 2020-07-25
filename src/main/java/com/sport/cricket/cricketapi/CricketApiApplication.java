@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SpringBootApplication
 @EnableScheduling
-@ComponentScan(basePackages = {"com.cricketfoursix"})
+@ComponentScan(basePackages = {"com.cricketfoursix", "com.sport.cricket.cricketapi"})
 public class CricketApiApplication {
 
 	@Bean

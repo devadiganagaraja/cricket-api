@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
         //(origins = "http://www.cricket46.com")
-public class SeasonController {
+public class SeaasonController {
 
     @Autowired
     SeasonService seasonService;
@@ -21,23 +21,23 @@ public class SeasonController {
 
 
     @GetMapping("/leagues/{league}/seasons")
-    public List<Season> seasons(@PathVariable Integer league) {
+    public List<Season> seasons(@PathVariable Long league) {
         return seasonService.getSeasons(league);
     }
 
 
     @GetMapping("/leagues/{league}/seasons/{season}")
-    public Season leagueSeason(@PathVariable Integer league, @PathVariable Integer season) {
+    public Season leagueSeason(@PathVariable Long league, @PathVariable Integer season) {
         return seasonService.getSeason(league, season);
     }
 
     @GetMapping("/leagues/{league}/seasons/{season}/teams")
-    public List<String> seasonTeams(@PathVariable Integer league, @PathVariable Integer season) {
+    public List<String> seasonTeams(@PathVariable Long league, @PathVariable Integer season) {
         return seasonService.getSeasonTeams(league, season);
     }
 
     @GetMapping("/leagues/{league}/seasons/{season}/games")
-    public List<Game> seasonGames(@PathVariable Integer league, @PathVariable Integer season) {
+    public List<Game> seasonGames(@PathVariable Long league, @PathVariable Integer season) {
         return seasonService.getSeasonGames(league, season);
     }
 }

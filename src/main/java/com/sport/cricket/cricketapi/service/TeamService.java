@@ -1,9 +1,9 @@
 package com.sport.cricket.cricketapi.service;
 
-import com.sport.cricket.cricketapi.domain.persistance.QTeamAggregate;
-import com.sport.cricket.cricketapi.domain.persistance.TeamAggregate;
+import com.cricketfoursix.cricketdomain.aggregate.QTeamAggregate;
+import com.cricketfoursix.cricketdomain.aggregate.TeamAggregate;
+import com.cricketfoursix.cricketdomain.repository.TeamRepository;
 import com.sport.cricket.cricketapi.domain.response.Team;
-import com.sport.cricket.cricketapi.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
