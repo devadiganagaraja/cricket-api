@@ -24,6 +24,7 @@ public class GameCommentaryService {
 
         List<BBBAggregate> bbbAggregates = ballRepository.findByEventId(gameId);
         GameCommentary gameCommentary = new GameCommentary();
+        gameCommentary.setEventId(gameId);
 
         if (null != bbbAggregates) {
             bbbAggregates.forEach(bbbAggregate -> {
