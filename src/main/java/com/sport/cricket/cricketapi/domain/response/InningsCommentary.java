@@ -8,16 +8,18 @@ import java.util.TreeSet;
 
 public class InningsCommentary implements Comparable<InningsCommentary>{
 
-    private InningCommentarySummary inningCommentarySummary;
     private Set<OverCommentary> overCommentarySet = new TreeSet<>();
 
+    private int inningsNumber;
 
-    public InningCommentarySummary getInningCommentarySummary() {
-        return inningCommentarySummary;
+
+
+    public int getInningsNumber() {
+        return inningsNumber;
     }
 
-    public void setInningCommentarySummary(InningCommentarySummary inningCommentarySummary) {
-        this.inningCommentarySummary = inningCommentarySummary;
+    public void setInningsNumber(int inningsNumber) {
+        this.inningsNumber = inningsNumber;
     }
 
     public Set<OverCommentary> getOverCommentarySet() {
@@ -30,13 +32,13 @@ public class InningsCommentary implements Comparable<InningsCommentary>{
 
     @Override
     public int compareTo(InningsCommentary o) {
-        return (o.inningCommentarySummary.getInningsNo()) - this.inningCommentarySummary.getInningsNo();
+        return (o.getInningsNumber()) - this.getInningsNumber();
     }
 
     @Override
     public String toString() {
         return "InningsCommentary{" +
-                "inningSummary=" + inningCommentarySummary +
+                "inningsNumber=" + inningsNumber +
                 ", overCommentarySet=" + overCommentarySet +
                 '}';
     }

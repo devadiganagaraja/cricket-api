@@ -1,19 +1,39 @@
 package com.sport.cricket.cricketapi.domain.response;
 
+import com.cricketfoursix.cricketdomain.common.bbb.InningCommentarySummary;
 import com.cricketfoursix.cricketdomain.domain.bbb.OverSummary;
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class OverCommentary implements Comparable<OverCommentary> {
 
     private int overNumber;
     private OverSummary overSummary;
+    private TreeMap<Double, String> overRunsSummaryMap = new TreeMap<>();
+    private String overRunsSummary = "";
     private Set<BallCommentary> ballCommentarySet = new TreeSet<>();
+    private InningCommentarySummary inningCommentarySummary;
+
 
     public OverSummary getOverSummary() {
         return overSummary;
+    }
+
+    public String getOverRunsSummary() {
+        return overRunsSummary;
+    }
+
+
+    public TreeMap<Double, String> getOverRunsSummaryMap() {
+        return overRunsSummaryMap;
+    }
+
+    public void setOverRunsSummaryMap(TreeMap<Double, String> overRunsSummaryMap) {
+        this.overRunsSummaryMap = overRunsSummaryMap;
+    }
+
+    public void setOverRunsSummary(String overRunsSummary) {
+        this.overRunsSummary = overRunsSummary;
     }
 
     public void setOverSummary(OverSummary overSummary) {
@@ -39,6 +59,14 @@ public class OverCommentary implements Comparable<OverCommentary> {
 
     public void setOverNumber(int overNumber) {
         this.overNumber = overNumber;
+    }
+
+    public InningCommentarySummary getInningCommentarySummary() {
+        return inningCommentarySummary;
+    }
+
+    public void setInningCommentarySummary(InningCommentarySummary inningCommentarySummary) {
+        this.inningCommentarySummary = inningCommentarySummary;
     }
 
     @Override
