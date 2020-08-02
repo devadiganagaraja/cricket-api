@@ -28,6 +28,8 @@ public class Game {
     private List<Leader> leaders = new ArrayList<>();
     private LiveScore liveScore = new LiveScore();
 
+    private GameCommentary gameCommentary;
+
 
     public String getName() {
         return name;
@@ -109,6 +111,14 @@ public class Game {
 
     public Integer getSeason() {
         return season;
+    }
+
+    public GameCommentary getGameCommentary() {
+        return gameCommentary;
+    }
+
+    public void setGameCommentary(GameCommentary gameCommentary) {
+        this.gameCommentary = gameCommentary;
     }
 
     public void setSeason(Integer season) {
