@@ -110,25 +110,18 @@ public class SeasonService {
     private void populateSeasonLiveGameInfo(LeagueSeason leagueSeason, Season season) {
 
         if(null != leagueSeason.getPostGames()){
-
-            leagueSeason.getPostGames().forEach(gameInfo -> {
-                //leagueSeason.getLiveGames().forEach(gameInfo -> {
-
-
+                leagueSeason.getLiveGames().forEach(gameInfo -> {
                     LiveGameInfo liveGameInfo = new LiveGameInfo();
-                liveGameInfo.setGameId(gameInfo.getGameId());
-                liveGameInfo.setTeam1Name(gameInfo.getTeam1Name());
-                liveGameInfo.setTeam2Name(gameInfo.getTeam2Name());
-                liveGameInfo.setGameDate(gameInfo.getDate());
-                liveGameInfo.setDateStr(df.format(gameInfo.getDate()));
-                liveGameInfo.setTeam1Score(gameInfo.getTeam1Score());
-                liveGameInfo.setTeam2Score(gameInfo.getTeam2Score());
-                liveGameInfo.setClassType(gameInfo.getGameClass().getShortName());
-                //liveGameInfo.setNote(gameInfo.getNote());
-                liveGameInfo.setNote(gameInfo.getTeam2Name().split(":")[0]+" own toss. Batting");
-                if(season.getLiveGameInfoList().size() < 2)
+                    liveGameInfo.setGameId(gameInfo.getGameId());
+                    liveGameInfo.setTeam1Name(gameInfo.getTeam1Name());
+                    liveGameInfo.setTeam2Name(gameInfo.getTeam2Name());
+                    liveGameInfo.setGameDate(gameInfo.getDate());
+                    liveGameInfo.setDateStr(df.format(gameInfo.getDate()));
+                    liveGameInfo.setTeam1Score(gameInfo.getTeam1Score());
+                    liveGameInfo.setTeam2Score(gameInfo.getTeam2Score());
+                    liveGameInfo.setClassType(gameInfo.getGameClass().getShortName());
+                    liveGameInfo.setNote(gameInfo.getNote());
                     season.getLiveGameInfoList().add(liveGameInfo);
-
             });
             season.getPostGameInfoList().sort(Comparator.comparing(postGameInfo -> postGameInfo.getGameDate()));
         }
@@ -141,9 +134,7 @@ public class SeasonService {
 
         if(null != leagueSeason.getNextGames()){
 
-            //leagueSeason.getNextGames().forEach(gameInfo -> {
-            leagueSeason.getPostGames().forEach(gameInfo -> {
-
+            leagueSeason.getNextGames().forEach(gameInfo -> {
                 PreGameInfo preGameInfo = new PreGameInfo();
                 preGameInfo.setGameId(gameInfo.getGameId());
                 preGameInfo.setTeam1Name(gameInfo.getTeam1Name());
