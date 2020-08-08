@@ -52,6 +52,7 @@ public class LeagueService {
     }
 
     private boolean isTrendingLeague(LeagueInfo leagueInfo) {
+        if(null == leagueInfo) return false;
         Map<Integer, LeagueSeason> seasonsMap =  leagueInfo.getLeagueSeasonMap();
         Optional<LeagueSeason> leagueSeasonOpt = geltLatestLeagueSeason(seasonsMap);
         if(leagueSeasonOpt.isPresent()){

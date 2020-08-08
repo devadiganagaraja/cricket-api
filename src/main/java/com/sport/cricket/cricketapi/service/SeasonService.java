@@ -5,13 +5,18 @@ import com.cricketfoursix.cricketdomain.aggregate.LeagueAggregate;
 import com.cricketfoursix.cricketdomain.common.league.LeagueSeason;
 import com.cricketfoursix.cricketdomain.repository.LeagueRepository;
 import com.sport.cricket.cricketapi.domain.response.Game;
-import com.sport.cricket.cricketapi.domain.response.Season;
+import com.sport.cricket.cricketapi.domain.response.season.LiveGameInfo;
+import com.sport.cricket.cricketapi.domain.response.season.PostGameInfo;
+import com.sport.cricket.cricketapi.domain.response.season.PreGameInfo;
+import com.sport.cricket.cricketapi.domain.response.season.Season;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import javax.swing.text.DateFormatter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 public class SeasonService {
@@ -22,6 +27,10 @@ public class SeasonService {
 
     @Autowired
     TeamNameService teamNameService;
+
+
+    DateFormat df = new SimpleDateFormat("dd/MM/yy");
+    DateFormat timeFormat = new SimpleDateFormat("hh.mm aa");
 
 
 
@@ -63,12 +72,94 @@ public class SeasonService {
                 season.setStartDate(leagueSeason.getStartDate());
                 season.setEndDate(leagueSeason.getEndDate());
                 //TODO season.setTeamNames(leagueSeason.getTeams().);
+
+                populateSeasonPostGameInfo(leagueSeason, season);
+                populateSeasonLiveGameInfo(leagueSeason, season);
+                populateSeasonPreGameInfo(leagueSeason, season);
                 return season;
             }
 
         }
         return null;
     }
+
+    private void populateSeasonPostGameInfo(LeagueSeason leagueSeason, Season season) {
+
+        if(null != leagueSeason.getPostGames()){
+
+            leagueSeason.getPostGames().forEach(gameInfo -> {
+
+                PostGameInfo postGameInfo = new PostGameInfo();
+                postGameInfo.setGameId(gameInfo.getGameId());
+                postGameInfo.setTeam1Name(gameInfo.getTeam1Name());
+                postGameInfo.setTeam2Name(gameInfo.getTeam2Name());
+                postGameInfo.setGameDate(gameInfo.getDate());
+                postGameInfo.setDateStr(df.format(gameInfo.getDate()));
+                postGameInfo.setTeam1Score(gameInfo.getTeam1Score());
+                postGameInfo.setTeam2Score(gameInfo.getTeam2Score());
+                postGameInfo.setClassType(gameInfo.getGameClass().getShortName());
+                postGameInfo.setNote(gameInfo.getNote());
+                season.getPostGameInfoList().add(postGameInfo);
+            });
+            season.getPostGameInfoList().sort(Comparator.comparing(postGameInfo -> postGameInfo.getGameDate(), Comparator.reverseOrder()));
+        }
+
+    }
+
+
+    private void populateSeasonLiveGameInfo(LeagueSeason leagueSeason, Season season) {
+
+        if(null != leagueSeason.getPostGames()){
+
+            leagueSeason.getPostGames().forEach(gameInfo -> {
+                //leagueSeason.getLiveGames().forEach(gameInfo -> {
+
+
+                    LiveGameInfo liveGameInfo = new LiveGameInfo();
+                liveGameInfo.setGameId(gameInfo.getGameId());
+                liveGameInfo.setTeam1Name(gameInfo.getTeam1Name());
+                liveGameInfo.setTeam2Name(gameInfo.getTeam2Name());
+                liveGameInfo.setGameDate(gameInfo.getDate());
+                liveGameInfo.setDateStr(df.format(gameInfo.getDate()));
+                liveGameInfo.setTeam1Score(gameInfo.getTeam1Score());
+                liveGameInfo.setTeam2Score(gameInfo.getTeam2Score());
+                liveGameInfo.setClassType(gameInfo.getGameClass().getShortName());
+                //liveGameInfo.setNote(gameInfo.getNote());
+                liveGameInfo.setNote(gameInfo.getTeam2Name().split(":")[0]+" own toss. Batting");
+                if(season.getLiveGameInfoList().size() < 2)
+                    season.getLiveGameInfoList().add(liveGameInfo);
+
+            });
+            season.getPostGameInfoList().sort(Comparator.comparing(postGameInfo -> postGameInfo.getGameDate()));
+        }
+
+    }
+
+
+
+    private void populateSeasonPreGameInfo(LeagueSeason leagueSeason, Season season) {
+
+        if(null != leagueSeason.getNextGames()){
+
+            //leagueSeason.getNextGames().forEach(gameInfo -> {
+            leagueSeason.getPostGames().forEach(gameInfo -> {
+
+                PreGameInfo preGameInfo = new PreGameInfo();
+                preGameInfo.setGameId(gameInfo.getGameId());
+                preGameInfo.setTeam1Name(gameInfo.getTeam1Name());
+                preGameInfo.setTeam2Name(gameInfo.getTeam2Name());
+                preGameInfo.setGameDate(gameInfo.getDate());
+                preGameInfo.setDateStr(df.format(gameInfo.getDate()));
+                preGameInfo.setTimeStr(timeFormat.format(gameInfo.getDate()));
+                preGameInfo.setClassType(gameInfo.getGameClass().getShortName());
+                preGameInfo.setVenue(gameInfo.getVenue());
+                season.getPreGameInfoList().add(preGameInfo);
+            });
+            season.getPreGameInfoList().sort(Comparator.comparing(preGameInfo -> preGameInfo.getGameDate()));
+        }
+
+    }
+
 
     public List<String> getSeasonTeams(Long league, Integer seasonYear) {
         List<String> teams = new ArrayList<>();
