@@ -12,6 +12,9 @@ public class Season {
     private Integer year;
     private Integer id;
 
+
+    private List<Integer> seasons;
+
     private List<PostGameInfo> postGameInfoList = new ArrayList<>();
     private List<PreGameInfo> preGameInfoList = new ArrayList<>();
     private List<LiveGameInfo> liveGameInfoList = new ArrayList<>();
@@ -22,6 +25,14 @@ public class Season {
 
     public String getName() {
         return name;
+    }
+
+    public List<Integer> getSeasons() {
+        return seasons;
+    }
+
+    public void setSeasons(List<Integer> seasons) {
+        this.seasons = seasons;
     }
 
     public void setName(String name) {

@@ -1,8 +1,11 @@
 package com.sport.cricket.cricketapi.service;
 
 import com.cricketfoursix.cricketdomain.aggregate.LeagueAggregate;
+import com.cricketfoursix.cricketdomain.aggregate.LeagueIndexAggregate;
 import com.cricketfoursix.cricketdomain.common.league.LeagueInfo;
 import com.cricketfoursix.cricketdomain.common.league.LeagueSeason;
+import com.cricketfoursix.cricketdomain.common.league.LeagueType;
+import com.cricketfoursix.cricketdomain.repository.LeagueIndexRepository;
 import com.cricketfoursix.cricketdomain.repository.LeagueRepository;
 import com.sport.cricket.cricketapi.domain.response.league.LeagueDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,10 @@ public class LeagueService {
 
     @Autowired
     LeagueRepository leagueRepository;
+
+
+    @Autowired
+    LeagueIndexRepository leagueIndexRepository;
 
 
     public List<LeagueDetails> getLeagues() {
@@ -46,7 +53,17 @@ public class LeagueService {
         if(leagueAggregateOptional.isPresent()){
             LeagueAggregate leagueAggregate =  leagueAggregateOptional.get();
             LeagueInfo leagueInfo = leagueAggregate.getLeagueInfo();
-            return populateLeagueDetails(leagueInfo);
+            LeagueDetails leagueDetails =  populateLeagueDetails(leagueInfo);
+            Optional<LeagueIndexAggregate> leagueIndexAggregateOptional =  leagueIndexRepository.findById(leagueInfo.getLeagueId());
+
+            if(null != leagueIndexAggregateOptional ){
+                LeagueIndexAggregate leagueIndexAggregate =  leagueIndexAggregateOptional.get();
+                if(LeagueType.tour.equals(leagueIndexAggregate.getLeagueType())){
+                    leagueDetails.getChildLeagues().addAll(leagueIndexAggregate.getChildLeagues());
+                }
+
+            }
+            return leagueDetails;
         }
         else return null;
     }
