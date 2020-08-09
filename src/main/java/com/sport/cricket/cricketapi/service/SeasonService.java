@@ -12,10 +12,8 @@ import com.sport.cricket.cricketapi.domain.response.season.Season;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.DateFormatter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -58,12 +56,18 @@ public class SeasonService {
     public Season getSeason(Long league, Integer seasonId) {
         Optional<LeagueAggregate> leagueAggregateOpt = leagueRepository.findById(league);
         if(leagueAggregateOpt.isPresent()){
-            Optional<Integer> seasonIdOptional = leagueAggregateOpt.get().getLeagueInfo().getLeagueSeasonMap().keySet().stream()
+
+            Map<Integer, LeagueSeason> seasonMap = leagueAggregateOpt.get().getLeagueInfo().getLeagueSeasonMap();
+            Optional<Integer> seasonIdOptional = null;
+            if(seasonId > 0){
+                seasonIdOptional = seasonMap.keySet().stream()
                     .filter(season -> season.equals(seasonId)).findFirst();
+            }else{
+                seasonIdOptional = Optional.ofNullable(Collections.max(seasonMap.keySet()));
+            }
 
             if(seasonIdOptional.isPresent()) {
                 LeagueSeason leagueSeason = leagueAggregateOpt.get().getLeagueInfo().getLeagueSeasonMap().get(seasonIdOptional.get());
-
 
                 Season season = new Season();
                 season.setYear(Integer.valueOf(leagueSeason.getLeagueYear()));
@@ -76,6 +80,7 @@ public class SeasonService {
                 populateSeasonPostGameInfo(leagueSeason, season);
                 populateSeasonLiveGameInfo(leagueSeason, season);
                 populateSeasonPreGameInfo(leagueSeason, season);
+                season.setSeasons(new ArrayList<>(seasonMap.keySet()));
                 return season;
             }
 
