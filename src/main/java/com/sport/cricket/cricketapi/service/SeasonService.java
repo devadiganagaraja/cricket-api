@@ -81,6 +81,9 @@ public class SeasonService {
                 populateSeasonLiveGameInfo(leagueSeason, season);
                 populateSeasonPreGameInfo(leagueSeason, season);
                 season.setSeasons(new ArrayList<>(seasonMap.keySet()));
+                season.setBattingLeaders(leagueSeason.getBattingLeaders());
+                season.setBowlingLeaders(leagueSeason.getBowlingLeaders());
+                season.setTeamGroups(leagueSeason.getTeamGroups());
                 return season;
             }
 
