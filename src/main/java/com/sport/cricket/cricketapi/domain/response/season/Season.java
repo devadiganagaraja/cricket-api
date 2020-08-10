@@ -1,5 +1,9 @@
 package com.sport.cricket.cricketapi.domain.response.season;
 
+import com.cricketfoursix.cricketdomain.common.stats.BattingLeader;
+import com.cricketfoursix.cricketdomain.common.stats.BowlingLeader;
+import com.cricketfoursix.cricketdomain.common.stats.TeamStandingGroup;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +24,29 @@ public class Season {
     private List<LiveGameInfo> liveGameInfoList = new ArrayList<>();
 
 
+    private List<BattingLeader> battingLeaders = new ArrayList<>();
+
+    private List<BowlingLeader> bowlingLeaders = new ArrayList<>();
+
+    private List<TeamStandingGroup> teamGroups  = new ArrayList<>();
+
+
+    public List<BowlingLeader> getBowlingLeaders() {
+        return bowlingLeaders;
+    }
+
+    public void setBowlingLeaders(List<BowlingLeader> bowlingLeaders) {
+        this.bowlingLeaders = bowlingLeaders;
+    }
+
+
+    public List<TeamStandingGroup> getTeamGroups() {
+        return teamGroups;
+    }
+
+    public void setTeamGroups(List<TeamStandingGroup> teamGroups) {
+        this.teamGroups = teamGroups;
+    }
 
     private ArrayList<String> teamNames;
 
@@ -33,6 +60,14 @@ public class Season {
 
     public void setSeasons(List<Integer> seasons) {
         this.seasons = seasons;
+    }
+
+    public List<BattingLeader> getBattingLeaders() {
+        return battingLeaders;
+    }
+
+    public void setBattingLeaders(List<BattingLeader> battingLeaders) {
+        this.battingLeaders = battingLeaders;
     }
 
     public void setName(String name) {
