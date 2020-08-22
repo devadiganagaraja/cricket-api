@@ -131,7 +131,7 @@ public class SeasonService {
                     liveGameInfo.setNote(gameInfo.getNote());
                     season.getLiveGameInfoList().add(liveGameInfo);
             });
-            season.getPostGameInfoList().sort(Comparator.comparing(postGameInfo -> postGameInfo.getGameDate()));
+            season.getLiveGameInfoList().sort(Comparator.comparing(postGameInfo -> postGameInfo.getGameDate()));
         }
 
     }
