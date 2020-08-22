@@ -82,6 +82,7 @@ public class GameService {
 
             Map<Integer, ScoreCard> inningsScorecard = new TreeMap<>();
             if(null != gameAggregate.getCompetitor1()){
+                game.setTeam1squad(gameAggregate.getCompetitor1().getSquad());
                 Map<Integer, InningsScoreCard> inningsScoreMap = gameAggregate.getCompetitor1().getInningsScores();
 
 
@@ -123,6 +124,7 @@ public class GameService {
 
 
             if(null != gameAggregate.getCompetitor2()){
+                game.setTeam2squad(gameAggregate.getCompetitor2().getSquad());
                 Map<Integer, InningsScoreCard> inningsScoreMap = gameAggregate.getCompetitor2().getInningsScores();
                 if(null != inningsScoreMap){
                     inningsScoreMap.forEach((innings, inningsScoreCard) -> {

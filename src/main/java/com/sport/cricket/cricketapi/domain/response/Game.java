@@ -2,6 +2,7 @@ package com.sport.cricket.cricketapi.domain.response;
 
 
 import com.cricketfoursix.cricketdomain.common.game.ManOfTheMatch;
+import com.cricketfoursix.cricketdomain.common.squad.SquadPlayer;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,6 +28,8 @@ public class Game {
     private List<ScoreCard> scoreCards;
     private List<Leader> leaders = new ArrayList<>();
     private LiveScore liveScore = new LiveScore();
+    private List<SquadPlayer> team1squad = new ArrayList<>();
+    private List<SquadPlayer> team2squad = new ArrayList<>();
 
     private GameCommentary gameCommentary;
 
@@ -178,6 +181,22 @@ public class Game {
 
     public List<String> getTeam2Score() {
         return team2Score;
+    }
+
+    public List<SquadPlayer> getTeam1squad() {
+        return team1squad;
+    }
+
+    public void setTeam1squad(List<SquadPlayer> team1squad) {
+        this.team1squad = team1squad;
+    }
+
+    public List<SquadPlayer> getTeam2squad() {
+        return team2squad;
+    }
+
+    public void setTeam2squad(List<SquadPlayer> team2squad) {
+        this.team2squad = team2squad;
     }
 
     public void setTeam2Score(List<String> team2Score) {
