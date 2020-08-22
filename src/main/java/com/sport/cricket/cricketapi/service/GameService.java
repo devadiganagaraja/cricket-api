@@ -6,6 +6,7 @@ import com.cricketfoursix.cricketdomain.common.game.*;
 import com.cricketfoursix.cricketdomain.common.game.Competitor;
 import com.cricketfoursix.cricketdomain.repository.GameRepository;
 import com.sport.cricket.cricketapi.domain.response.*;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -338,6 +339,9 @@ public class GameService {
             battingScoreLeaf.setFours(Integer.valueOf(batsmanCard.getFours()));
             battingScoreLeaf.setSixes(Integer.valueOf(batsmanCard.getSixes()));
             battingScoreLeaf.setStrikeRate(battingScoreLeaf.getRuns() > 0 ? econamyRateFormat.format((double)((double)battingScoreLeaf.getRuns()/battingScoreLeaf.getBalls()*100)) :"" );
+            if(StringUtils.isBlank(battingScoreLeaf.getStrikeRate())){
+                battingScoreLeaf.setStrikeRate(battingScoreLeaf.getBalls() > 0 ? "0.00" : "-");
+            }
         }
 
         return battingScoreLeaf;
