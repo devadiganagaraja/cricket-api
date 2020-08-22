@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
         //(origins = "http://www.cricket46.com")
-public class SeaasonController {
+public class SeasonController {
 
     @Autowired
     SeasonService seasonService;
