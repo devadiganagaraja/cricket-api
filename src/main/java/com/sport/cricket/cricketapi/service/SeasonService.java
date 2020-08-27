@@ -7,7 +7,7 @@ import com.cricketfoursix.cricketdomain.repository.LeagueRepository;
 import com.sport.cricket.cricketapi.domain.response.Game;
 import com.sport.cricket.cricketapi.domain.response.season.LiveGameInfo;
 import com.sport.cricket.cricketapi.domain.response.season.PostGameInfo;
-import com.sport.cricket.cricketapi.domain.response.season.PreGameInfo;
+import com.sport.cricket.cricketapi.domain.response.season.ScheduledGameInfo;
 import com.sport.cricket.cricketapi.domain.response.season.Season;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +79,7 @@ public class SeasonService {
                 //TODO season.setTeamNames(leagueSeason.getTeams().);
 
                 populateSeasonPostGameInfo(leagueSeason, season);
-                populateSeasonPreGameInfo(leagueSeason, season);
+                populateSeasonScheduledGameInfo(leagueSeason, season);
                 populateSeasonLiveGameInfo(leagueSeason, season);
                 season.setSeasons(new ArrayList<>(seasonMap.keySet()));
                 season.setBattingLeaders(leagueSeason.getBattingLeaders());
@@ -130,6 +130,7 @@ public class SeasonService {
                     liveGameInfo.setTeam2Score(gameInfo.getTeam2Score());
                     liveGameInfo.setClassType(gameInfo.getGameClass().getShortName());
                     liveGameInfo.setNote(gameInfo.getNote());
+                    liveGameInfo.setGameStatus(gameInfo.getGameStatus());
                     season.getLiveGameInfoList().add(liveGameInfo);
             });
             populateSeasonTodayNotStartedGameInfo(leagueSeason, season);
@@ -152,8 +153,7 @@ public class SeasonService {
                     liveGameInfo.setTeam2Name(gameInfo.getTeam2Name());
                     liveGameInfo.setGameDate(gameInfo.getDate());
                     liveGameInfo.setDateStr(df.format(gameInfo.getDate()));
-                    liveGameInfo.setTeam1Score(gameInfo.getTeam1Score());
-                    liveGameInfo.setTeam2Score(gameInfo.getTeam2Score());
+                    liveGameInfo.setGameStatus(gameInfo.getGameStatus());
                     liveGameInfo.setClassType(gameInfo.getGameClass().getShortName());
                     liveGameInfo.setNote(gameInfo.getNote());
                     season.getLiveGameInfoList().add(liveGameInfo);
@@ -164,25 +164,25 @@ public class SeasonService {
     }
 
 
-    private void populateSeasonPreGameInfo(LeagueSeason leagueSeason, Season season) {
+    private void populateSeasonScheduledGameInfo(LeagueSeason leagueSeason, Season season) {
 
         if(null != leagueSeason.getNextGames()){
 
             leagueSeason.getNextGames().forEach(gameInfo -> {
                 if(!DateUtils.isSameDay( gameInfo.getDate(), new Date())) {
-                    PreGameInfo preGameInfo = new PreGameInfo();
-                    preGameInfo.setGameId(gameInfo.getGameId());
-                    preGameInfo.setTeam1Name(gameInfo.getTeam1Name());
-                    preGameInfo.setTeam2Name(gameInfo.getTeam2Name());
-                    preGameInfo.setGameDate(gameInfo.getDate());
-                    preGameInfo.setDateStr(df.format(gameInfo.getDate()));
-                    preGameInfo.setTimeStr(timeFormat.format(gameInfo.getDate()));
-                    preGameInfo.setClassType(gameInfo.getGameClass().getShortName());
-                    preGameInfo.setVenue(gameInfo.getVenue());
-                    season.getPreGameInfoList().add(preGameInfo);
+                    ScheduledGameInfo scheduledGameInfo = new ScheduledGameInfo();
+                    scheduledGameInfo.setGameId(gameInfo.getGameId());
+                    scheduledGameInfo.setTeam1Name(gameInfo.getTeam1Name());
+                    scheduledGameInfo.setTeam2Name(gameInfo.getTeam2Name());
+                    scheduledGameInfo.setGameDate(gameInfo.getDate());
+                    scheduledGameInfo.setDateStr(df.format(gameInfo.getDate()));
+                    scheduledGameInfo.setTimeStr(timeFormat.format(gameInfo.getDate()));
+                    scheduledGameInfo.setClassType(gameInfo.getGameClass().getShortName());
+                    scheduledGameInfo.setVenue(gameInfo.getVenue());
+                    season.getScheduledGameInfoList().add(scheduledGameInfo);
                 }
             });
-            season.getPreGameInfoList().sort(Comparator.comparing(preGameInfo -> preGameInfo.getGameDate()));
+            season.getScheduledGameInfoList().sort(Comparator.comparing(scheduledGameInfo -> scheduledGameInfo.getGameDate()));
         }
 
     }

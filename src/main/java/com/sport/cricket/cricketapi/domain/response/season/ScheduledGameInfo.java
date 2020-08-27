@@ -2,7 +2,7 @@ package com.sport.cricket.cricketapi.domain.response.season;
 
 import java.util.Date;
 
-public class PreGameInfo {
+public class ScheduledGameInfo {
     private long gameId;
     private String team1Name;
     private String team2Name;
