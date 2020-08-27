@@ -12,7 +12,7 @@ import com.sport.cricket.cricketapi.domain.response.home.CricketHome;
 import com.sport.cricket.cricketapi.domain.response.league.LeagueDetails;
 import com.sport.cricket.cricketapi.domain.response.season.LiveGameInfo;
 import com.sport.cricket.cricketapi.domain.response.season.PostGameInfo;
-import com.sport.cricket.cricketapi.domain.response.season.PreGameInfo;
+import com.sport.cricket.cricketapi.domain.response.season.ScheduledGameInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -67,20 +66,20 @@ public class CricketHomeService {
                 if(null != gameAggregate.getGameInfo()) {
                     GameInfo gameInfo = gameAggregate.getGameInfo();
                     if(null != gameInfo.getGameClass() && gameInfo.getGameClass().getId() <= 6) {
-                        PreGameInfo preGameInfo = new PreGameInfo();
-                        preGameInfo.setGameId(gameInfo.getGameId());
-                        preGameInfo.setTeam1Name(gameInfo.getTeam1Name());
-                        preGameInfo.setTeam2Name(gameInfo.getTeam2Name());
-                        preGameInfo.setGameDate(gameInfo.getDate());
-                        preGameInfo.setDateStr(df.format(gameInfo.getDate()));
-                        preGameInfo.setTimeStr(timeFormat.format(gameInfo.getDate()));
-                        preGameInfo.setClassType(gameInfo.getGameClass().getShortName());
-                        preGameInfo.setVenue(gameInfo.getVenue());
-                        cricketHome.getPreGameInfoList().add(preGameInfo);
+                        ScheduledGameInfo scheduledGameInfo = new ScheduledGameInfo();
+                        scheduledGameInfo.setGameId(gameInfo.getGameId());
+                        scheduledGameInfo.setTeam1Name(gameInfo.getTeam1Name());
+                        scheduledGameInfo.setTeam2Name(gameInfo.getTeam2Name());
+                        scheduledGameInfo.setGameDate(gameInfo.getDate());
+                        scheduledGameInfo.setDateStr(df.format(gameInfo.getDate()));
+                        scheduledGameInfo.setTimeStr(timeFormat.format(gameInfo.getDate()));
+                        scheduledGameInfo.setClassType(gameInfo.getGameClass().getShortName());
+                        scheduledGameInfo.setVenue(gameInfo.getVenue());
+                        cricketHome.getScheduledGameInfoList().add(scheduledGameInfo);
                     }
                 }
             });
-        cricketHome.getPreGameInfoList().sort(Comparator.comparing(preGameInfo -> preGameInfo.getGameDate()));
+        cricketHome.getScheduledGameInfoList().sort(Comparator.comparing(scheduledGameInfo -> scheduledGameInfo.getGameDate()));
     }
 
     private void populateLiveGames(CricketHome cricketHome) {

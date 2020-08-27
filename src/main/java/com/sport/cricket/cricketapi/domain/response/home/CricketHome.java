@@ -3,7 +3,7 @@ package com.sport.cricket.cricketapi.domain.response.home;
 import com.sport.cricket.cricketapi.domain.response.league.LeagueDetails;
 import com.sport.cricket.cricketapi.domain.response.season.LiveGameInfo;
 import com.sport.cricket.cricketapi.domain.response.season.PostGameInfo;
-import com.sport.cricket.cricketapi.domain.response.season.PreGameInfo;
+import com.sport.cricket.cricketapi.domain.response.season.ScheduledGameInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ public class CricketHome {
     private List<LeagueDetails> tours = new ArrayList<>();
 
     private List<PostGameInfo> postGameInfoList = new ArrayList<>();
-    private List<PreGameInfo> preGameInfoList = new ArrayList<>();
+    private List<ScheduledGameInfo> scheduledGameInfoList = new ArrayList<>();
     private List<LiveGameInfo> liveGameInfoList = new ArrayList<>();
 
     public List<LeagueDetails> getTournaments() {
@@ -40,12 +40,12 @@ public class CricketHome {
         this.postGameInfoList = postGameInfoList;
     }
 
-    public List<PreGameInfo> getPreGameInfoList() {
-        return preGameInfoList;
+    public List<ScheduledGameInfo> getScheduledGameInfoList() {
+        return scheduledGameInfoList;
     }
 
-    public void setPreGameInfoList(List<PreGameInfo> preGameInfoList) {
-        this.preGameInfoList = preGameInfoList;
+    public void setScheduledGameInfoList(List<ScheduledGameInfo> scheduledGameInfoList) {
+        this.scheduledGameInfoList = scheduledGameInfoList;
     }
 
     public List<LiveGameInfo> getLiveGameInfoList() {

@@ -1,5 +1,7 @@
 package com.sport.cricket.cricketapi.domain.response.season;
 
+import com.cricketfoursix.cricketdomain.common.game.GameStatus;
+
 import java.util.Date;
 
 public class LiveGameInfo {
@@ -10,6 +12,7 @@ public class LiveGameInfo {
     private String ClassType;
     private String team1Score;
     private String team2Score;
+    private GameStatus gameStatus;
     private String dateStr;
     private Date gameDate;
     private String note;
@@ -37,6 +40,14 @@ public class LiveGameInfo {
 
     public void setTeam2Name(String team2Name) {
         this.team2Name = team2Name;
+    }
+
+    public GameStatus getGameStatus() {
+        return gameStatus;
+    }
+
+    public void setGameStatus(GameStatus gameStatus) {
+        this.gameStatus = gameStatus;
     }
 
     public String getClassType() {
