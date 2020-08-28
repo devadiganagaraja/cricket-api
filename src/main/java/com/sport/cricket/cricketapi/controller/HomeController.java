@@ -26,7 +26,7 @@ public class HomeController {
 
 
 
-    @GetMapping("/home")
+    @GetMapping("/cricket46")
     public CricketHome home() {
         return cricketHomeService.populateCricketHomePage();
     }
