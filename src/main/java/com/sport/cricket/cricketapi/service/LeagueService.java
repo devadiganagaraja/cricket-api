@@ -25,6 +25,7 @@ public class LeagueService {
     LeagueIndexRepository leagueIndexRepository;
 
 
+
     public List<LeagueDetails> getLeagues() {
         List<LeagueDetails> leagueDetailsList = new ArrayList<>();
         List<com.cricketfoursix.cricketdomain.aggregate.LeagueAggregate> leagueAggregates = leagueRepository.findAll();

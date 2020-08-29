@@ -20,6 +20,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +45,8 @@ public class CricketHomeService {
     TeamNameService teamNameService;
 
 
+    public List<Long> class6Leagues = Arrays.asList(112099l,104624l, 104572l, 112489l,112827l);
+
 
 
     public CricketHome populateCricketHomePage() {
@@ -61,11 +64,11 @@ public class CricketHomeService {
     private void populatePreGames(CricketHome cricketHome) {
         Instant now = Instant.now();
         Instant dayAfterToomorow = now.plus(3, ChronoUnit.DAYS);
-        Iterable<GameAggregate> gameAggregates = gameRepository.findAll(qGameAggregate.gameInfo.gameStatus.eq(GameStatus.pre).and(qGameAggregate.gameInfo.date.loe(Date.from(dayAfterToomorow))));
+        Iterable<GameAggregate> gameAggregates = gameRepository.findAll(qGameAggregate.gameInfo.gameStatus.eq(GameStatus.pre).and(qGameAggregate.gameInfo.date.loe(Date.from(dayAfterToomorow))).and(qGameAggregate.gameInfo.date.goe(new Date())));
         gameAggregates.forEach(gameAggregate -> {
                 if(null != gameAggregate.getGameInfo()) {
                     GameInfo gameInfo = gameAggregate.getGameInfo();
-                    if(null != gameInfo.getGameClass() && gameInfo.getGameClass().getId() <= 6) {
+                    if(null != gameInfo.getGameClass() && (gameInfo.getGameClass().getId() <=3 ||  class6Leagues.contains(gameInfo.getLeagueId()))) {
                         ScheduledGameInfo scheduledGameInfo = new ScheduledGameInfo();
                         scheduledGameInfo.setGameId(gameInfo.getGameId());
                         scheduledGameInfo.setTeam1Name(gameInfo.getTeam1Name());
@@ -87,19 +90,21 @@ public class CricketHomeService {
 
 
         gameAggregates.forEach(gameAggregate -> {
-            if(null != gameAggregate.getGameInfo()) {
+            if(null != gameAggregate.getGameInfo() ) {
                 GameInfo gameInfo = gameAggregate.getGameInfo();
-                LiveGameInfo liveGameInfo = new LiveGameInfo();
-                liveGameInfo.setGameId(gameInfo.getGameId());
-                liveGameInfo.setTeam1Name(gameInfo.getTeam1Name());
-                liveGameInfo.setTeam2Name(gameInfo.getTeam2Name());
-                liveGameInfo.setGameDate(gameInfo.getDate());
-                liveGameInfo.setDateStr(df.format(gameInfo.getDate()));
-                liveGameInfo.setTeam1Score(gameInfo.getTeam1Score());
-                liveGameInfo.setTeam2Score(gameInfo.getTeam2Score());
-                liveGameInfo.setClassType(gameInfo.getGameClass().getShortName());
-                liveGameInfo.setNote(gameInfo.getNote());
-                cricketHome.getLiveGameInfoList().add(liveGameInfo);
+                if( gameInfo.getGameClass().getId() <=3 ||  class6Leagues.contains(gameInfo.getLeagueId())) {
+                    LiveGameInfo liveGameInfo = new LiveGameInfo();
+                    liveGameInfo.setGameId(gameInfo.getGameId());
+                    liveGameInfo.setTeam1Name(gameInfo.getTeam1Name());
+                    liveGameInfo.setTeam2Name(gameInfo.getTeam2Name());
+                    liveGameInfo.setGameDate(gameInfo.getDate());
+                    liveGameInfo.setDateStr(df.format(gameInfo.getDate()));
+                    liveGameInfo.setTeam1Score(gameInfo.getTeam1Score());
+                    liveGameInfo.setTeam2Score(gameInfo.getTeam2Score());
+                    liveGameInfo.setClassType(gameInfo.getGameClass().getShortName());
+                    liveGameInfo.setNote(gameInfo.getNote());
+                    cricketHome.getLiveGameInfoList().add(liveGameInfo);
+                }
             }
             });
     }
@@ -114,7 +119,7 @@ public class CricketHomeService {
             if(null != gameAggregate.getGameInfo()) {
 
                 GameInfo gameInfo = gameAggregate.getGameInfo();
-                if(null != gameInfo.getGameClass() && gameInfo.getGameClass().getId() <= 6) {
+                if( gameInfo.getGameClass().getId() <=3 ||  class6Leagues.contains(gameInfo.getLeagueId())) {
 
                     PostGameInfo postGameInfo = new PostGameInfo();
                     postGameInfo.setGameId(gameInfo.getGameId());
@@ -130,7 +135,7 @@ public class CricketHomeService {
                 }
             }
         });
-        cricketHome.getPostGameInfoList().sort(Comparator.comparing(postGameInfo -> postGameInfo.getGameDate()));
+        cricketHome.getPostGameInfoList().sort(Comparator.comparing(postGameInfo -> postGameInfo.getGameDate(), Comparator.reverseOrder()));
 
 
     }
