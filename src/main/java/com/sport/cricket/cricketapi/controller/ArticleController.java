@@ -21,7 +21,10 @@ public class ArticleController {
 
     @GetMapping("/articles/{articleId}")
     public CricketArticle article(@PathVariable(value="articleId") Long articleId) {
+        int String = 0;
+
         return articleService.fetchArticle(articleId);
+
     }
 
     @DeleteMapping("/articles/{articleId}")
@@ -37,6 +40,8 @@ public class ArticleController {
 
     @PutMapping("/articles")
     public CricketArticle createArticle(@RequestBody CricketArticle article){
+
+        System.out.println("put article:"+article);
         return articleService.postArticle(article);
     }
 }
