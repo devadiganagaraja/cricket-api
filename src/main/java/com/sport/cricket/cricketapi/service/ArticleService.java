@@ -3,6 +3,7 @@ package com.sport.cricket.cricketapi.service;
 import com.cricketfoursix.cricketdomain.aggregate.ArticleAggregate;
 import com.cricketfoursix.cricketdomain.aggregate.UserAggregate;
 import com.cricketfoursix.cricketdomain.common.article.ArticleAuthor;
+import com.cricketfoursix.cricketdomain.common.article.ArticleStatus;
 import com.cricketfoursix.cricketdomain.common.article.CricketArticle;
 import com.cricketfoursix.cricketdomain.repository.ArticleRepository;
 import com.cricketfoursix.cricketdomain.repository.UserRepository;
@@ -35,6 +36,9 @@ public class ArticleService {
             cricketArticle.setImage(articleAggregate.getImage());
             cricketArticle.setPostPara(articleAggregate.getPostPara());
             cricketArticle.setAuthor(articleAggregate.getAuthor());
+            cricketArticle.setArticleStatus(articleAggregate.getArticleStatus());
+            cricketArticle.setLastModified(articleAggregate.getLastModified());
+            cricketArticle.setPublishDate(articleAggregate.getPublishDate());
             cricketArticles.add(cricketArticle);
         });
         return cricketArticles;
@@ -97,6 +101,9 @@ public class ArticleService {
         articleAggregate.setImage(article.getImage());
         articleAggregate.setPostPara(article.getPostPara());
         articleAggregate.setAuthor(article.getAuthor());
+        articleAggregate.setLastModified(new Date());
+        articleAggregate.setArticleStatus(ArticleStatus.created);
+        System.out.println("articleAggregate:"+articleAggregate);
         articleRepository.save(articleAggregate);
         articleAggregate.setId(articleAggregate.getId());
 
