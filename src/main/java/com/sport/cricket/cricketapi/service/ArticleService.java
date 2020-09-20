@@ -8,8 +8,8 @@ import com.cricketfoursix.cricketdomain.common.article.CricketArticle;
 import com.cricketfoursix.cricketdomain.common.article.CricketEnthusiast;
 import com.cricketfoursix.cricketdomain.repository.ArticleRepository;
 import com.cricketfoursix.cricketdomain.repository.UserRepository;
-import com.sport.cricket.cricketapi.controller.ClapArticle;
-import com.sport.cricket.cricketapi.controller.CommentArticle;
+import com.sport.cricket.cricketapi.domain.response.article.ClapArticle;
+import com.sport.cricket.cricketapi.domain.response.article.CommentArticle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

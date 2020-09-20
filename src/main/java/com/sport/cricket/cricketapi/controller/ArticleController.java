@@ -1,6 +1,8 @@
 package com.sport.cricket.cricketapi.controller;
 
 import com.cricketfoursix.cricketdomain.common.article.CricketArticle;
+import com.sport.cricket.cricketapi.domain.response.article.ClapArticle;
+import com.sport.cricket.cricketapi.domain.response.article.CommentArticle;
 import com.sport.cricket.cricketapi.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

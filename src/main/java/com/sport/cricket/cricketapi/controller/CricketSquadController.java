@@ -57,8 +57,8 @@ public class CricketSquadController {
     GamePlayerPointsRepository gamePlayerPointsRepository;
 
     @CrossOrigin
-    @RequestMapping("/bestEleven/leaderboard/event/{eventId}")
-    public List<LeaderBoard> leaderBoard(@PathVariable(value="eventId") Long gameId) {
+    @RequestMapping("/bestEleven/leaderboard/games/{gameId}")
+    public List<LeaderBoard> leaderBoard(@PathVariable(value="gameId") Long gameId) {
         Optional<GamePlayerPointsAggregate> eventPlayerPointsAggregateOptional = gamePlayerPointsRepository.findById(gameId);
 
         List<LeaderBoard> leaderBoards = new ArrayList<>();
