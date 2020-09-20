@@ -45,6 +45,10 @@ public class CricketHomeService {
     TeamNameService teamNameService;
 
 
+    @Autowired
+    ArticleService articleService;
+
+
     public List<Long> class6Leagues = Arrays.asList(112099l,104624l, 104572l, 112489l,112827l);
 
 
@@ -57,6 +61,8 @@ public class CricketHomeService {
         populatePostGames(cricketHome);
         populateLiveGames(cricketHome);
         populatePreGames(cricketHome);
+        cricketHome.setCricketArticles(articleService.fetchArticles());
+        cricketHome.getCricketArticles().sort(Comparator.comparing(article -> article.getLastModified(), Comparator.reverseOrder()));
 
         return cricketHome;
     }

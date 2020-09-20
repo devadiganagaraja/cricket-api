@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
 @CrossOrigin
+@RestController
 public class ArticleController {
 
     @Autowired
@@ -38,10 +38,29 @@ public class ArticleController {
         return articleService.updateArticle(article);
     }
 
+
+    @PostMapping("/articles/clap")
+    public void clapArticle(@RequestBody ClapArticle clapArticle){
+         articleService.clapArticle(clapArticle);
+    }
+
+    @PostMapping("/articles/clap-comment")
+    public void clapArticleComment(@RequestBody ClapArticle clapComment){
+        articleService.clapArticleComment(clapComment);
+    }
+
     @PutMapping("/articles")
     public CricketArticle createArticle(@RequestBody CricketArticle article){
 
         System.out.println("put article:"+article);
         return articleService.postArticle(article);
+    }
+
+
+    @PutMapping("/articles/comment")
+    public CricketArticle createArticleComment(@RequestBody CommentArticle commentArticle){
+
+        System.out.println("put article comment:"+commentArticle);
+        return articleService.postArticleComment(commentArticle);
     }
 }
