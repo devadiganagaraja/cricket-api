@@ -1,4 +1,4 @@
-package com.sport.cricket.cricketapi.controller;
+package com.sport.cricket.cricketapi.domain.response.article;
 
 public class CommentArticle {
     private long articleId;
