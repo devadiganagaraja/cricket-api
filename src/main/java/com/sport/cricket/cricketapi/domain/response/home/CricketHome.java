@@ -1,5 +1,6 @@
 package com.sport.cricket.cricketapi.domain.response.home;
 
+import com.cricketfoursix.cricketdomain.common.article.CricketArticle;
 import com.sport.cricket.cricketapi.domain.response.league.LeagueDetails;
 import com.sport.cricket.cricketapi.domain.response.season.LiveGameInfo;
 import com.sport.cricket.cricketapi.domain.response.season.PostGameInfo;
@@ -15,6 +16,17 @@ public class CricketHome {
     private List<PostGameInfo> postGameInfoList = new ArrayList<>();
     private List<ScheduledGameInfo> scheduledGameInfoList = new ArrayList<>();
     private List<LiveGameInfo> liveGameInfoList = new ArrayList<>();
+
+    private List<CricketArticle> cricketArticles = new ArrayList<>();
+
+
+    public List<CricketArticle> getCricketArticles() {
+        return cricketArticles;
+    }
+
+    public void setCricketArticles(List<CricketArticle> cricketArticles) {
+        this.cricketArticles = cricketArticles;
+    }
 
     public List<LeagueDetails> getTournaments() {
         return tournaments;
