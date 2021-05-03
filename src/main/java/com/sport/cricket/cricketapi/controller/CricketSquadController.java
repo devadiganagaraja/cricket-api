@@ -109,13 +109,13 @@ public class CricketSquadController {
                 squad1.setTeamName(teamNameService.getTeamNameByTeamId(gameAggregate.getCompetitor1().getId()));
                 long sourceTeam1Id = gameAggregate.getCompetitor1().getId() / 13;
 
-                squad1.setPlayers(eventSquadsService.getLeagueTeamPlayers(sourceTeam1Id, gameInfo));
+                squad1.setPlayers(gameAggregate.getCompetitor1().getSquad());
 
                 eventBestEleven.setSquad1(squad1);
                 Squad squad2 = new Squad();
                 squad2.setTeamName(teamNameService.getTeamNameByTeamId(gameAggregate.getCompetitor2().getId()));
                 long sourceTeam2Id = gameAggregate.getCompetitor2().getId() / 13;
-                squad2.setPlayers(eventSquadsService.getLeagueTeamPlayers(sourceTeam2Id, gameInfo));
+                squad2.setPlayers(gameAggregate.getCompetitor2().getSquad());
                 eventBestEleven.setSquad2(squad2);
 
                 Optional<UserEventSquadAggregate> userEventSquadAggregateOptional = userEventSquadRepository.findById(userName + ":" + gameId);
