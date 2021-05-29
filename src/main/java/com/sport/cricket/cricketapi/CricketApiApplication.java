@@ -1,6 +1,7 @@
 package com.sport.cricket.cricketapi;
 
 import com.cricketfoursix.cricketdomain.aggregate.GameAggregate;
+import com.sport.cricket.cricketapi.domain.games.cricketcards.GameInfo;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -49,6 +50,15 @@ public class CricketApiApplication {
 		executor.setThreadNamePrefix("default_task_executor_thread");
 		executor.initialize();
 		return executor;
+	}
+
+
+
+	@Bean
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	@Qualifier("liveGames")
+	public Map<Long, GameInfo> liveGames(){
+		return new ConcurrentHashMap<>();
 	}
 
 }
